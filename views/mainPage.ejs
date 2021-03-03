@@ -14,17 +14,62 @@ body, html {height: 100%}
   background-position: center;
   background-size: cover;
 }
+input[type=checkbox] {
+  display: none;
+}
+
+.container img {
+  margin: 100px;
+  transition: transform 0.25s ease;
+  cursor: zoom-in;
+}
+
+input[type=checkbox]:checked ~ label > img {
+  transform: scale(2);
+  cursor: zoom-out;
+}
 </style>
 <body>
 
-
-<div class="bgimg w3-display-container w3-animate-opacity w3-text-white">
-  <a href="#"><h1 class="w3-jumbo w3-button w3-display-topmiddle" href="/">MainPage</h1></a>
-  <div class="w3-display-bottomleft w3-padding-large">
-    Powered by <a href="#" target="_blank">Logan & Cleo</a>
-  </div>
+<div class="w3-display-bottom">
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/2.1.1/jquery.min.js"></script>
+<input type="file" id="upload" />
+<audio id="audio" controls>
+  <source src="" id="src" />
+</audio>
+  <input type='file' />
+<br>
+<div class="container">
+  <input type="checkbox" id="zoomCheck">
+  <label for="zoomCheck">
+    <img id="myImg" src="#">
+  </label>
+</div>
 </div>
 
+<script>
+window.addEventListener('load', function() {
+  document.querySelector('input[type="file"]').addEventListener('change', function() {
+      if (this.files && this.files[0]) {
+          var img = document.querySelector('img');
+          img.onload = () => {
+              URL.revokeObjectURL(img.src);  // no longer needed, free memory
+          }
+
+          img.src = URL.createObjectURL(this.files[0]); // set src to blob url
+      }
+  });
+});
+</script>
+<script>
+function handleFiles(event) {
+    var files = event.target.files;
+    $("#src").attr("src", URL.createObjectURL(files[0]));
+    document.getElementById("audio").load();
+}
+
+document.getElementById("upload").addEventListener("change", handleFiles, false);
+</script>
 </body>
 </html>
 
