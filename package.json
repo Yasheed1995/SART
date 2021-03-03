@@ -1,0 +1,34 @@
+{
+  "name": "sigfox-callback-demo",
+  "version": "1.0.0",
+  "description": "Your first SIGFOX callback handler :) . Logs the POST request into a mongo collection, and show a table of received messages",
+  "keywords": "sigfox",
+  "main": "server.js",
+  "dependencies": {
+    "body-parser": "^1.19.0",
+    "debug": "^4.1.1",
+    "ejs": "2.3.1",
+    "ejs-locals": "^1.0.2",
+    "express": "^4.17.1",
+    "firebase-admin": "^8.8.0",
+    "moment": "^2.24.0",
+    "mongojs": "^3.0.0"
+  },
+  "engines": {},
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "start": "DEBUG=sigfox-callback:* node server.js",
+    "monitor": "DEBUG=sigfox-callback:* nodemon server.js"
+  },
+  "author": "Nicolas Lesconnec",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/nicolsc/sigfox-callback-demo"
+  },
+  "license": "ISC",
+  "devDependencies": {
+    "nodemon": "^1.19.1",
+    "reload": "^3.0.3"
+  },
+  "proxy": "http://loalhost:34000/"
+}

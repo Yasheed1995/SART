@@ -1,0 +1,351 @@
+<!DOCTYPE html>
+<html lang="en">
+
+    <!-- ejs script -->
+    <% var Arr = []                         %>
+    <% db_data.forEach(function(item) {     %>
+    <% let myArr = []                       %>
+    <% myArr.push(item.payload.humid)       %>
+    <% myArr.push(item.payload.temperature) %>
+    <% myArr.push(item.payload.pm25)        %>
+    <% myArr.push(item.payload.voltage)     %>
+    <% myArr.push(item.payload.rssi)        %>
+    <% myArr.push(item.payload.time)        %>
+    <% Arr.push(myArr)                      %>
+    <% })                                   %>
+
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+
+    <title><%= title %></title>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <!-- w3 CSS -->
+    <link rel="stylesheet" href="https://www.w3schools.com/w3css/4/w3.css">
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Raleway">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+
+    
+    <style>
+      html,body,h1,h2,h3,h4,h5 {font-family: "Raleway", sans-serif}
+	  /* Always set the map height explicitly to define the size of the div
+* element that contains the map. */
+	  #map {height: 30%;}
+    </style>
+
+</head>
+
+<body>
+
+<meta http-equiv="refresh" content="900" >
+<!-- Top container -->
+<div class="w3-bar w3-top w3-black w3-large" style="z-index:4">
+  <button class="w3-bar-item w3-button w3-hide-large w3-hover-none w3-hover-text-light-grey" onclick="w3_open();"><i class="fa fa-bars"></i>  Menu</button>
+  <a href='/' class="w3-bar-item w3-right ">HOME</a>
+</div>
+
+<!-- Sidebar/menu -->
+<nav class="w3-sidebar w3-collapse w3-white w3-animate-left" style="z-index:3;width:300px;" id="mySidebar"><br>
+<div class="w3-container w3-row">
+  <div class="w3-col s4">
+    <img src="https://i.ibb.co/sVbJjkV/brocere-logo-big.png" alt="brocere" class="w3_circle w3-margin-right" style="width:53px" border="0">
+  </div>
+  <div class="w3-col s8 w3-bar">
+
+	<span>Welcome, <strong>brocere</strong></span><br>
+	<a href="mailto: daniel@brocere.com" class="w3-bar-item w3-button"><i class="fa fa-envelope"></i></a>
+	<a href="#" class="w3-bar-item w3-button w3-disabled"><i class="fa fa-user"></i></a>
+	<a href="#" class="w3-bar-item w3-button w3-disabled"><i class="fa fa-cog"></i></a>
+
+</div>
+</div>
+<hr>
+
+<div class="w3-container">
+    <h5>Menu</h5>
+</div>
+
+
+<div class="w3-bar-block">
+    <a href="#" class="w3-bar-item w3-button w3-padding-16 w3-hide-large w3-dark-grey w3-hover-black" onclick="w3_close()" title="close menu"><i class="fa fa-remove fa-fw"></i>  Close Menu</a>
+
+    <a href="#" class="w3-bar-item w3-button w3-padding w3-light-blue "><i class="fa fa-users fa-fw"></i>  Data</a>
+    <a href=<%= db_data[0].path + '/graph' %> class="w3-bar-item w3-button w3-padding w3-light-gray"><i class="fa fa-eye fa-fw"></i>  Graph</a>
+    <a href=<%= db_data[0].path + '/history' %> class="w3-bar-item w3-button w3-padding"><i class="fa fa-history fa-fw"></i>  History</a>
+
+</div>
+</nav>
+
+<!-- Overlay effect when opening sidebar on small screens -->
+<div class="w3-overlay w3-hide-large w3-animate-opacity" onclick="w3_close()" style="cursor:pointer" title="close side menu" id="myOverlay"></div>
+
+<!-- !PAGE CONTENT! -->
+<div class="w3-main" style="margin-left:300px;margin-top:43px;">
+
+<!-- Header -->
+<header class="w3-container" style="padding-top:22px">
+  <h5><b><i class="fa fa-dashboard"></i> Data (Today)</b></h5>
+</header>
+
+<hr>
+    
+<!-- card widget -->
+<h3> place: <%=db_data[0].path%> </h3>
+<div class="w3-container">
+
+<!-- Graph -->
+<div class="w3-container w3-half">
+
+<div class="w3-row-padding w3-margin-bottom">
+    <div class="w3-margin">
+    <div class="w3-card w3-container w3-pale-red w3-padding-16 w3-row-padding">
+      <h4>PM2.5</h4>
+      <div id="linechart_p" style="width: 100%; height: 100%;"></div>
+    </div>
+    </div>
+
+    <div class="w3-margin ">
+    <div class="w3-card w3-container w3-pale-blue w3-padding-16">
+      <h4>temp</h4>
+      <div id="linechart_t"style="width: 100%; height: auto;"></div>
+    </div>
+    </div>
+      
+    <div class="w3-margin">
+    <div class="w3-card w3-container w3-light-gray  w3-padding-16">
+      <h4>humid</h4>
+      <div id="linechart_h"style="width: 100%; height: auto;"></div>
+    </div>
+    </div>
+            
+    <div class="w3-margin ">
+    <div class="w3-card w3-container w3-pale-green w3-padding-16">
+      <h4>voltage</h4>
+      <div id="linechart_v"style="width: 100%; height: auto;"></div>
+    </div>
+    </div>
+
+    <div class="w3-margin">
+    <div class="w3-card w3-container w3-pale-yellow  w3-padding-16">
+      <h4>RSSI</h4>
+      <div id="linechart_r"style="width: 100%; height: auto;"></div>
+    </div>
+    </div>
+	
+</div>
+</div>
+
+<!-- card -->
+<div class="w3-card-4 w3-margin w3-cell " style="width:70%">
+<div class="w3-display-container w3-cell">
+<div class="w3-xlarge w3-padding">
+  <h4><b>Recent data</b></h4>
+
+  <h5> Device <%=db_data[0].payload.id%> </h5>
+  <h5><%=moment(db_data[0].payload.time*1000).format('YYYY-MM-DD')%></h5>
+  <h5><%=moment(db_data[0].payload.time*1000 + 3600000 * 8).format('HH:mm:ss')%></h5>
+  <!--<h5><%=moment(db_data.time).format()%></h5>-->
+</div>
+          
+<div class="w3-container w3-cell w3-xlarge w3-padding w3-center">
+  <svg height="160" width="160">
+    <!-- TODO -->
+    <circle cx="80" cy="80" r="70" stroke=<%= db_data[0].payload.color %> stroke-width="3" fill="white" />
+    <text x="50%" y="35%" text-anchor="middle" alignment-baseline="middle"> PM2.5 </text>
+    <text x="50%" y="60%" text-anchor="middle" alignment-baseline="middle"> <%=db_data[0].payload.pm25%> ug/m3 </text>
+  </svg>
+</div>
+</div>
+
+<div class="w3-container w3-cell">
+<div class=" w3-center">
+  <!-- <div class="w3-xlarge w3-padding"> -->
+  <h3><b> humid </b></h3>
+  <h4> <%=db_data[0].payload.humid%> %</h4>
+</div>
+
+<div class=" w3-center">
+  <!-- <div class="w3-xlarge w3-padding"> -->
+  <h3><b>temp</b></h3>
+  <h4><%=db_data[0].payload.temperature%> &deg;C</h4>
+</div>
+
+<div class=" w3-center">
+  <!-- <div class="w3-xlarge w3-padding"> -->
+  <h3><b>voltage</b></h3>
+  <h4><%=db_data[0].payload.voltage / 1000%> V</h4>
+</div>
+
+<div class=" w3-center w3-margin-bottom">
+  <!-- <div class="w3-xlarge w3-padding"> -->
+  <h3><b>RSSI</b><h3>
+  <h4><%=db_data[0].payload.rssi%> dBm</h4>
+</div>
+</div>
+</div>
+</div>
+
+<br>
+
+<!-- Footer -->
+<footer class="w3-container w3-padding-16 w3-light-grey">
+  <p>Designed by Brocere eletronics corp. ltd.</p>
+  <p>All Rights Reserved.</p>
+</footer>
+
+<!-- End page content -->
+</div>
+
+<!-- scripts are here -->
+<script type="text/javascript" src="https://www.gstatic.com/charts/loader.js"></script>
+  <script type="text/javascript">
+    google.charts.load('current', {'packages':['line']});
+    google.charts.setOnLoadCallback(drawChart);
+
+    function drawChart() {
+      // access Arr
+      var arr = [<%-Arr%>] // [humid, temperature, pm25, voltage, RSSI]
+      
+      var options = {
+        backgroundColor: { fill:'transparent' }
+        
+      };
+
+      // _t: temp & humid
+      // _p: pm2.5
+      // _v: voltage
+      // _r: RSSI
+        
+      array_t = [['time', 'temp']]
+      array_h = [['time', 'humid']]
+      array_p = [['time', 'pm25']]
+      array_v = [['time', 'voltage']]
+      array_r = [['time', 'RSSI']]
+
+      // 1 day 48 datas
+      var i,j;
+      for (i = 48 * 6 ; i >= 0; i-=6) {
+	  /*
+          tmp_p = [((240 - i)/5)]
+          tmp_t = [((240 - i)/5)]
+          tmp_r = [((240 - i)/5)]
+          tmp_v = [((240 - i)/5)]
+          tmp_h = [((240 - i)/5)]
+*/
+		  var date_ = new Date(arr[i+5] * 1000)
+		  tmp_p = [date_]
+		  tmp_t = [date_]
+		  tmp_r = [date_]
+		  tmp_v = [date_]
+		  tmp_h = [date_]
+		  
+          
+          tmp_t.push(arr[i+1])
+          tmp_p.push(arr[i+2])
+          tmp_v.push(arr[i+3] / 1000)
+          tmp_r.push(arr[i+4])
+          tmp_h.push(arr[i])
+
+          array_t.push(tmp_t)
+          array_p.push(tmp_p)
+          array_v.push(tmp_v)
+          array_r.push(tmp_r)
+          array_h.push(tmp_h)
+      }
+      // convert data to google chart instance
+      var data_t = google.visualization.arrayToDataTable(array_t);
+      var data_p = google.visualization.arrayToDataTable(array_p);
+      var data_v = google.visualization.arrayToDataTable(array_v);
+      var data_r = google.visualization.arrayToDataTable(array_r);
+      var data_h = google.visualization.arrayToDataTable(array_h);
+
+      // draw charts
+      var chart_p = new google.charts.Line(document.getElementById('linechart_p'));
+      chart_p.draw(data_p, google.charts.Line.convertOptions(options));
+      var chart_t = new google.charts.Line(document.getElementById('linechart_t'));
+      chart_t.draw(data_t, google.charts.Line.convertOptions(options));
+      var chart_v = new google.charts.Line(document.getElementById('linechart_v'));
+      chart_v.draw(data_v, google.charts.Line.convertOptions(options));
+      var chart_r = new google.charts.Line(document.getElementById('linechart_r'));
+      chart_r.draw(data_r, google.charts.Line.convertOptions(options));
+      var chart_h = new google.charts.Line(document.getElementById('linechart_h'));
+      chart_h.draw(data_h, google.charts.Line.convertOptions(options));
+    }
+</script>
+
+<script>
+var map;
+function initMap() {
+map = new google.maps.Map(
+document.getElementById('map'),
+{center: new google.maps.LatLng(25+0.886400/60, 121+31.687/60), zoom: 16});
+
+var iconBase =
+'https://developers.google.com/maps/documentation/javascript/examples/full/images/';
+
+var icons = {
+parking: {
+icon: iconBase + 'parking_lot_maps.png'
+},
+library: {
+icon: iconBase + 'library_maps.png'
+},
+info: {
+icon: iconBase + 'info-i_maps.png'
+}
+};
+
+var features = [
+{
+position: new google.maps.LatLng(25+0.8864/60, 121+31.687/60),
+type: 'parking'
+},
+{
+position: new google.maps.LatLng(25+0.8851/60, 121+31.6926/60),
+type: 'parking'
+}
+];
+
+// Create markers.
+for (var i = 0; i < features.length; i++) {
+var marker = new google.maps.Marker({
+position: features[i].position,
+icon: icons[features[i].type].icon,
+map: map
+});
+};
+}
+</script>
+<script async defer
+src="https://maps.googleapis.com/maps/api/js?key=AIzaSyAeJ66K12sfrqnjDilwJpDi7WdXloqXlyU&callback=initMap">
+</script>
+<!-- w3.css script -->
+<script>
+  // Get the Sidebar
+  var mySidebar = document.getElementById("mySidebar");
+
+  // Get the DIV with overlay effect
+  var overlayBg = document.getElementById("myOverlay");
+
+  // Toggle between showing and hiding the sidebar, and add overlay effect
+  function w3_open() {
+    if (mySidebar.style.display === 'block') {
+          mySidebar.style.display = 'none';
+          overlayBg.style.display = "none";
+    } else {
+        mySidebar.style.display = 'block';
+        overlayBg.style.display = "block";
+    }
+  }
+
+  // Close the sidebar with the close button
+  function w3_close() {
+    mySidebar.style.display = "none";
+    overlayBg.style.display = "none";
+  }
+</script>
+
+</body>
+</html>

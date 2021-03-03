@@ -1,0 +1,5 @@
+{
+    "exec": "DEBUG=sigfox-callback:* node server.js",
+    "watch": ["views/*", "./", "public/*"],
+    "ext": "js, html, ejs, css, json"
+}

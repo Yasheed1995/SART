@@ -1,0 +1,754 @@
+<!DOCTYPE html>
+<html lang="en">
+
+    <!-- ejs script -->
+    <% var Arr = []                           %>
+    <% var SLArr = []                         %>
+    <% var DArr = []                          %>
+    <% var VArr = []                          %>
+    <% var moveArr = []                       %>
+    <% db_data.forEach(function(item) {       %>
+    <% let myArr = []                         %>
+    <% let SLstateArr = []                    %>
+    <% let DrinkstateArr = []                 %>
+    <% let vArr = []                          %>
+    <% let mArr = []                          %>
+    <% mArr.push(item.time)                   %>
+    <% mArr.push(item.eatx)                   %>
+    <% mArr.push(item.rumx)                   %>
+    <% mArr.push(item.actx)                   %>
+    <% mArr.push(item.restx)                  %>
+    <% myArr.push(item.time)                  %>
+    <% myArr.push(item.answer)                %>
+    <% SLstateArr.push(item.time)             %>
+    <% SLstateArr.push(item.SL_state)         %>
+    <% DrinkstateArr.push(item.time)          %>
+    <% DrinkstateArr.push(item.Drink_state)   %>
+    <% vArr.push(item.time)                   %>
+    <% vArr.push(item.voltage)                %>
+    <% Arr.push(myArr)                        %>
+    <% SLArr.push(SLstateArr)                 %>
+    <% DArr.push(DrinkstateArr)               %>
+    <% VArr.push(vArr)                        %>
+    <% moveArr.push(mArr)                     %>
+    <% })                                     %>
+
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+
+    <title><%= title %></title>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <!-- w3 CSS -->
+    <link rel="stylesheet" href="https://www.w3schools.com/w3css/4/w3.css">
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Raleway">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.11.2/css/all.css">
+    
+    <style>
+      html,body,h1,h2,h3,h4,h5 {font-family: "Raleway", sans-serif}
+	  body {
+	  }
+    </style>
+
+    <!--<meta http-equiv="refresh" content="300" >-->
+</head>
+
+<body bgcolor="#ededf8">
+
+
+<!-- Top container -->
+
+<!-- Sidebar/menu -->
+<nav class="w3-sidebar w3-collapse w3-white w3-animate-left" style="z-index:3;width:300px;box-shadow: rgba(0,0,0,0.2) 0 0 10px" id="mySidebar"><br>
+<div class="w3-container w3-row">
+  <div class="w3-col s4">
+    <a href='/'><img src="https://i.ibb.co/sVbJjkV/brocere-logo-big.png" alt="brocere" class="w3_circle w3-margin-right" style="width:53px" border="0"></a>
+  </div>
+  <div class="w3-col s8 w3-bar">
+
+	<span>Welcome, <strong>brocere</strong></span><br>
+
+
+</div>
+</div>
+<hr>
+
+<div class="w3-container">
+    <h5>Menu</h5>
+</div>
+
+
+<div class="w3-bar-block">
+    <a href="#" class="w3-bar-item w3-button w3-padding-16 w3-hide-large w3-dark-grey w3-hover-black" onclick="w3_close()" title="close menu">  Close Menu</a>
+    <a href="#" class="w3-bar-item w3-button w3-padding w3-light-blue ">  Devices list</a>
+    <a href="/sigfox0.7F0E48/graph" class="w3-bar-item w3-button w3-padding w3-while ">  7F0E48</a>
+    <a href="/sigfox0.7F0E49/graph" class="w3-bar-item w3-button w3-padding w3-while ">  7F0E49</a>
+    <a href="/sigfox0.7F0E4A/graph" class="w3-bar-item w3-button w3-padding w3-while ">  7F0E4A</a>
+    <a href="/sigfox0.7F0E4B/graph" class="w3-bar-item w3-button w3-padding w3-while ">  7F0E4B</a>
+    <a href="/sigfox0.7F0E4C/graph" class="w3-bar-item w3-button w3-padding w3-while ">  7F0E4C</a>
+    <a href="/sigfox0.7F0E4D/graph" class="w3-bar-item w3-button w3-padding w3-while ">  7F0E4D</a>
+    <a href="/sigfox0.7F0E4E/graph" class="w3-bar-item w3-button w3-padding w3-while ">  7F0E4E</a>
+    <a href="/sigfox0.7F0E4F/graph" class="w3-bar-item w3-button w3-padding w3-while ">  7F0E4F</a>
+    <a href="/sigfox0.7F0E60/graph" class="w3-bar-item w3-button w3-padding w3-while ">  7F0E60</a>
+    <a href="/sigfox0.7F0E61/graph" class="w3-bar-item w3-button w3-padding w3-while ">  7F0E61</a>
+</div>
+</nav>
+
+<!-- Overlay effect when opening sidebar on small screens -->
+<div class="w3-overlay w3-hide-large w3-animate-opacity" onclick="w3_close()" style="cursor:pointer" title="close side menu" id="myOverlay"></div>
+
+<!-- !PAGE CONTENT! -->
+<div class="w3-main" style="margin-left:300px;margin-top:43px;">
+
+<!-- Header -->
+<header class="w3-container" style="padding-top:22px">
+  <h5><b> Device ID: <%= db_data[0].ID %></b></h5>
+</header>
+
+<hr>
+    
+<!-- card widget -->
+<div class="w3-container">
+
+<!-- Graph -->
+<div class="w3-container">
+<div class="w3-row-padding w3-margin-bottom">
+
+    <div class="w3-margin w3-white w3-round-xlarge" style="height: 300px; box-shadow: rgba(0,0,0,0.2) 0 0 10px">
+    <div class=" w3-container" >
+      <h5>Daily Behavior Percentage</h5>
+      <div id="daychart" style="width: 100%; height: 100%;"></div>
+    </div>
+    </div>
+
+    <div class="w3-margin w3-white w3-round-xlarge" style="height: 300px; box-shadow: rgba(0,0,0,0.2) 0 0 10px">
+    <div class=" w3-container" >
+      <h5>Behavior Percentage</h5>
+      <div id="barchart_values" style="width: 100%; height: 100%;"></div>
+    </div>
+    </div>
+
+    <div class="w3-margin w3-white w3-round-xlarge" style="height: 300px; box-shadow: rgba(0,0,0,0.2) 0 0 10px">
+    <div class=" w3-container" >
+      <h5>Behavior Minutes</h5>
+      <div id="barchart_values_min" style="width: 100%; height: 100%;"></div>
+    </div>
+    </div>
+<!--
+
+    <div class="w3-margin w3-white w3-round-xlarge" style="height: 300px; box-shadow: rgba(0,0,0,0.2) 0 0 10px">
+    <div class=" w3-container" >
+      <h5>Behaviors</h5>
+      <div id="Move_type_chart" style="width: 100%; height: 100%;"></div>
+    </div>
+    </div>
+
+    <div class="w3-margin w3-white w3-round-xlarge" style="height: 300px; box-shadow: rgba(0,0,0,0.2) 0 0 10px">
+    <div class=" w3-container" >
+      <h5>Stand / Recline State</h5>
+      <div id="SL_state_chart" style="width: 100%; height: 100%;"></div>
+    </div>
+    </div>
+      
+    <div class="w3-margin w3-white w3-round-xlarge" style="height: 300px; box-shadow: rgba(0,0,0,0.2) 0 0 10px">
+    <div class=" w3-container" >
+      <h5>Drink State</h5>
+      <div id="range-buttons">
+      </div>
+      <div id="Drink_state_chart" style="width: 100%; height: 100%;"></div>
+    </div>
+    </div>
+
+    <div class="w3-margin w3-white w3-round-xlarge" style="height: 300px; box-shadow: rgba(0,0,0,0.2) 0 0 10px">
+    <div class=" w3-container" >
+      <h5>Voltage (V)</h5>
+      <div id="voltage_chart" style="width: 100%; height: 100%;"></div>
+    </div>
+    </div>
+</div>
+</div>
+-->
+
+<div class="w3-container w3-cell">
+</div>
+</div>
+</div>
+
+<br>
+
+<!-- Footer -->
+<footer class="w3-container w3-padding-16">
+  <p>Designed by Brocere eletronics corp. ltd.</p>
+  <p>All Rights Reserved.</p>
+</footer>
+
+<!-- End page content -->
+
+<!-- scripts are here -->
+<script type="text/javascript" src='https://www.google.com/jsapi?autoload={"modules":[{"name":"visualization","version":"1","packages":["corechart"]}]}'></script>
+<script type="text/javascript">
+    google.charts.load("current", {packages:["corechart"]});
+    google.charts.setOnLoadCallback(drawChart);
+    function drawChart() {      
+      
+      var arr = [<%-moveArr%>] // time, answer
+      console.log(arr)
+      const newArr = [["time", "eatx", "rumx", "actx", "restx"]]
+      let eatx = 0, rumx = 0, actx = 0, restx = 0;
+      for (let i = 0; i < arr.length/5; i += 1) {
+        
+        time = arr[5*i];
+        eatx += arr[5*i+1];
+        rumx += arr[5*i+2];
+        actx += arr[5*i+3];
+        restx += arr[5*i+4];
+        let Time = new Date(time * 1000);
+        if (Time.getHours() == 0 && Time.getMinutes() == 0){
+          console.log(Time);
+          const tmpArr = [];
+          tmpArr.push(time);
+          tmpArr.push(eatx);
+          tmpArr.push(rumx);
+          tmpArr.push(actx);
+          tmpArr.push(restx); 
+          console.log(tmpArr);
+          newArr.push(tmpArr);
+          eatx = 0
+          rumx = 0
+          actx = 0
+          restx = 0
+        }
+        
+      }
+
+/*
+      for (let i = 0; i < arr.length; i += 2) {
+        const answer = parseInt(arr[i + 1]);
+        if (answer === 2) eatx += 1;
+        if (answer === 1) rumx += 1;
+        if (answer === -1) actx += 1;
+        if (answer === -2) restx += 1;
+        const Time = new Date(arr[i]*1000);
+
+
+        if (Time.getHours() == 0 && Time.getMinutes() == 0) {
+          console.log(i, Time)
+          const tmpArr = []
+
+          tmpArr.push(arr[i]);
+          tmpArr.push(eatx);
+          tmpArr.push(rumx);
+          tmpArr.push(actx);
+          tmpArr.push(restx); 
+          newArr.push(tmpArr);
+          eatx = 0;
+          rumx = 0;
+          actx = 0;
+          restx = 0;
+        }
+      }
+*/
+      // while(arr.length) newArr.push(arr.splice(0,5))
+
+      var data = google.visualization.arrayToDataTable(newArr)
+      var view = new google.visualization.DataView(data);
+      view.setColumns([{
+        type: 'date',
+        label: data.getColumnLabel(0),
+        calc: function (dt, row) {
+            var timestamp = dt.getValue(row, 0) * 1000
+            return new Date(timestamp)
+        }
+
+        }, 1, 2,3,4])
+
+      var options = {
+        bar: {groupWidth: "40%"},
+        height: 250,
+        legend: { position: "up" },
+        isStacked:"percent",
+        axisTitlesPosition: "out",
+        vAxis: {
+            title: '',
+            titleTextStyle: { color: '#0b9727',fontSize:20,italic:false },
+            textStyle: {
+                fontSize: 10,
+                color: "#c9c9c9",
+            },
+          gridlines: {count:5},
+        },      // 縱軸設定
+        hAxis: {
+            title: '',
+            titleTextStyle: { color: '#3e0fac', fontSize: 20, italic: false },
+            textStyle: {
+                fontSize: 10,
+                color: "#c9c9c9",
+            },
+            gridlines: {count: 3},
+        },      // 橫軸設定
+
+        colors: ["#6f87bf","#95d57f","#fff494", "#ffa061"],
+      };
+      var chart = new google.visualization.ColumnChart(document.getElementById("daychart"));
+      chart.draw(view, options);
+}
+</script>
+
+<script type="text/javascript">
+    google.charts.load("current", {packages:["corechart"]});
+    google.charts.setOnLoadCallback(drawChart);
+    function drawChart() {
+      
+      var arr = [<%-moveArr%>] // time, answer
+      const newArr = [["time", "eatx", "rumx", "actx", "restx"] ]
+      
+      let eatx = 0, rumx = 0, actx = 0, restx = 0;
+      let prev_i = 0;
+
+
+      for (let i = 0; i < arr.length/5; i += 1) {
+        
+        time = arr[5*i];
+        eatx = arr[5*i+1];
+        rumx = arr[5*i+2];
+        actx = arr[5*i+3];
+        restx = arr[5*i+4];
+        const tmpArr = [];
+        tmpArr.push(arr[5*i]);
+        tmpArr.push(eatx);
+        tmpArr.push(rumx);
+        tmpArr.push(actx);
+        tmpArr.push(restx); 
+        //console.log(tmpArr);
+        newArr.push(tmpArr);
+      }
+/*
+      for (let i = 0; i < arr.length; i += 2) {
+        const answer = parseInt(arr[i + 1]);
+        if (answer === 2) eatx += 1;
+        if (answer === 1) rumx += 1;
+        if (answer === -1) actx += 1;
+        if (answer === -2) restx += 1;
+        const Time = new Date(arr[i]*1000);
+        const sum = eatx + rumx + actx + restx;
+        if (sum > 60) console.log('boom');
+
+        //if (sum >= 60) {
+        if (Time.getMinutes() - 0 < 1 || sum >= 60) {
+          const tmpArr = []
+          //console.log(Time, i - prev_i)
+          prev_i = i;
+
+          tmpArr.push(arr[i]+3600);
+          tmpArr.push(eatx);
+          tmpArr.push(rumx);
+          tmpArr.push(actx);
+          tmpArr.push(restx); 
+          newArr.push(tmpArr);
+          eatx = 0;
+          rumx = 0;
+          actx = 0;
+          restx = 0;
+        }
+      }
+      */
+
+      // while(arr.length) newArr.push(arr.splice(0,5))
+
+      var data = google.visualization.arrayToDataTable(newArr)
+      var view = new google.visualization.DataView(data);
+      view.setColumns([{
+        type: 'date',
+        label: data.getColumnLabel(0),
+        calc: function (dt, row) {
+            var timestamp = dt.getValue(row, 0) * 1000
+            return new Date(timestamp)
+        }
+
+        }, 1, 2,3,4])
+
+      var options = {
+        bar: {groupWidth: "40%"},
+        height: 250,
+        legend: { position: "up" },
+        isStacked:"percent",
+        axisTitlesPosition: "out",
+        vAxis: {
+            title: '',
+            titleTextStyle: { color: '#0b9727',fontSize:20,italic:false },
+            textStyle: {
+                fontSize: 10,
+                color: "#c9c9c9",
+            },
+          gridlines: {count:5},
+        },      // 縱軸設定
+        hAxis: {
+            title: '',
+            titleTextStyle: { color: '#3e0fac', fontSize: 20, italic: false },
+            textStyle: {
+                fontSize: 10,
+                color: "#c9c9c9",
+            },
+            gridlines: {count: 10},
+        },      // 橫軸設定
+
+        colors: ["#6f87bf","#95d57f","#fff494", "#ffa061"],
+      };
+      var options2 = {
+        height: 250,
+        legend: { position: "up" },
+        isStacked:"percent",
+        axisTitlesPosition: "out",
+        vAxis: {
+            viewWindowMode:'explicit',
+            viewWindow: {
+              //min: new Date(chartDateRange.max.getTime() - oneDay),
+              min: -1.5,
+						  max: 61.5
+            },
+            title: '',
+            titleTextStyle: { color: '#0b9727',fontSize:20,italic:false },
+            textStyle: {
+                fontSize: 10,
+                color: "#c9c9c9",
+            },
+          gridlines: {count:5},
+        },      // 縱軸設定
+        hAxis: {
+            title: '',
+            titleTextStyle: { color: '#3e0fac', fontSize: 20, italic: false },
+            textStyle: {
+                fontSize: 10,
+                color: "#c9c9c9",
+            },
+            gridlines: {count: 10},
+        },      // 橫軸設定
+
+        colors: ["#6f87bf","#95d57f","#fff494", "#ffa061"],
+      };
+      var chart = new google.visualization.ColumnChart(document.getElementById("barchart_values"));
+      chart.draw(view, options);
+      var chart2 = new google.charts.Line(document.getElementById("barchart_values_min"));
+      chart2.draw(view, options2);
+  }
+  </script>
+
+<script type="text/javascript">
+
+    google.charts.load("current", {packages:["corechart"]});
+    google.charts.setOnLoadCallback(drawChart);
+    function drawChart() {
+      
+      var arr = [<%-Arr%>] // time, answer
+      const newArr = [["time", "answer"]]
+
+      for (let i = 0; i < arr.length; i += 2) {
+        const answer = parseInt(arr[i + 1]);
+        const tmpArr = []
+        tmpArr.push(arr[i]);
+        tmpArr.push(arr[i+1]);
+        newArr.push(tmpArr);
+      }
+
+
+      var data = google.visualization.arrayToDataTable(newArr)
+      var view = new google.visualization.DataView(data);
+      view.setColumns([{
+        type: 'date',
+        label: data.getColumnLabel(0),
+        calc: function (dt, row) {
+            var timestamp = dt.getValue(row, 0) * 1000
+            return new Date(timestamp)
+        }
+
+        }, 1])
+
+      var options = {
+        bar: {groupWidth: "1%"},
+        height: 250,
+        legend: { position: "up" },
+        axisTitlesPosition: "out",
+        vAxis: {
+            viewWindowMode:'explicit',
+            viewWindow: {
+              //min: new Date(chartDateRange.max.getTime() - oneDay),
+              min: -3,
+						  max: 3
+            },
+            title: '',
+            titleTextStyle: { color: '#0b9727',fontSize:20,italic:false },
+            textStyle: {
+                fontSize: 10,
+                color: "#c9c9c9",
+            },
+          gridlines: {count:5},
+        },      // 縱軸設定
+        hAxis: {
+            title: '',
+            titleTextStyle: { color: '#3e0fac', fontSize: 20, italic: false },
+            textStyle: {
+                fontSize: 10,
+                color: "#c9c9c9",
+            },
+            gridlines: {count: 10},
+        },      // 橫軸設定
+
+        colors: ["#6f87bf","#95d57f","#fff494", "#ffa061"],
+      };
+      var chart = new google.visualization.ColumnChart(document.getElementById("Move_type_chart"));
+      chart.draw(view, options);
+  }
+  </script>
+
+<script>
+
+    google.charts.load("current", {packages:["corechart"]});
+    google.charts.setOnLoadCallback(drawChart);
+    function drawChart() {
+      
+      var arr = [<%-SLArr%>] // time, answer
+      const newArr = [["time", "SL_state"]]
+
+      for (let i = 0; i < arr.length; i += 2) {
+        const answer = parseInt(arr[i + 1]);
+        const tmpArr = []
+        tmpArr.push(arr[i]);
+        tmpArr.push(arr[i+1]);
+        newArr.push(tmpArr);
+
+      }
+
+
+      var data = google.visualization.arrayToDataTable(newArr)
+      var view = new google.visualization.DataView(data);
+      view.setColumns([{
+        type: 'date',
+        label: data.getColumnLabel(0),
+        calc: function (dt, row) {
+            var timestamp = dt.getValue(row, 0) * 1000
+            return new Date(timestamp)
+        }
+
+        }, 1])
+
+      var options = {
+        height: 250,
+        chartArea: {
+        width: '80%',
+        top: 36,
+        left: 36,
+        right: 18,
+        bottom: 36
+      },
+        legend: { position: "up" },
+        axisTitlesPosition: "out",
+        vAxis: {
+            viewWindowMode:'explicit',
+            viewWindow: {
+              //min: new Date(chartDateRange.max.getTime() - oneDay),
+              min: -0.5,
+						  max: 1.5
+            },
+            title: '',
+            titleTextStyle: { color: '#0b9727',fontSize:20,italic:false },
+            textStyle: {
+                fontSize: 10,
+                color: "#c9c9c9",
+            },
+          gridlines: {count:5},
+        },      // 縱軸設定
+        hAxis: {
+            title: '',
+            titleTextStyle: { color: '#3e0fac', fontSize: 20, italic: false },
+            textStyle: {
+                fontSize: 10,
+                color: "#c9c9c9",
+            },
+            gridlines: {count: 10},
+        },      // 橫軸設定
+
+        colors: ["#6f87bf","#95d57f","#fff494", "#ffa061"],
+      };
+      var chart = new google.charts.Line(document.getElementById("SL_state_chart"));
+      chart.draw(view, google.charts.Line.convertOptions(options));
+  }
+
+</script>
+
+<script>
+    // google.load("current", {packages:['controls', "corechart"]});
+    google.load("visualization", "1.0", {packages:["line"]});
+    // google.charts.setOnLoadCallback(drawChart);
+    google.setOnLoadCallback(drawChart);
+
+    function drawChart() {
+      
+      var arr = [<%-DArr%>] // time, answer
+      const newArr = [["time", "Drink_state"]]
+
+      for (let i = 0; i < arr.length; i += 2) {
+        const answer = parseInt(arr[i + 1]);
+        const tmpArr = []
+        tmpArr.push(new Date(arr[i]*1000));
+        tmpArr.push(arr[i+1]);
+        newArr.push(tmpArr);
+      }
+
+
+      var data = google.visualization.arrayToDataTable(newArr)
+      /*
+      var view = new google.visualization.DataView(data);
+      view.setColumns([{
+        type: 'date',
+        label: data.getColumnLabel(0),
+        calc: function (dt, row) {
+            var timestamp = dt.getValue(row, 0) * 1000
+            return new Date(timestamp)
+        }
+
+        }, 1])
+      */
+
+      var chartDateRange = data.getColumnRange(0);
+      var oneDay = (24*60*60*1000);
+
+      const options = {
+        height: 250,
+        legend: { position: "up" },
+        axisTitlesPosition: "out",
+        vAxis: {
+            viewWindowMode:'explicit',
+            viewWindow: {
+              //min: new Date(chartDateRange.max.getTime() - oneDay),
+              min: -0.5,
+						  max: 1.5
+            },
+            title: '',
+            titleTextStyle: { color: '#0b9727',fontSize:20,italic:false },
+            textStyle: {
+                fontSize: 10,
+                color: "#c9c9c9",
+            },
+          gridlines: {count:5},
+        },      // 縱軸設定
+        hAxis: {
+            /*
+            viewWindowMode:'explicit',
+            viewWindow: {
+              //min: new Date(chartDateRange.max.getTime() - oneDay),
+              min: chartDataRange.min
+						  max: chartDateRange.max
+            },
+            */
+            textStyle: {
+                fontSize: 10,
+                color: "#c9c9c9",
+            },
+        },      // 橫軸設定
+
+        colors: ["#6f87bf","#95d57f","#fff494", "#ffa061"],
+      };
+      var chart = new google.charts.Line(document.getElementById("Drink_state_chart"));
+      chart.draw(data, google.charts.Line.convertOptions(options));
+  }
+</script>
+
+<script>
+    // google.load("current", {packages:['controls', "corechart"]});
+    google.load("visualization", "1.0", {packages:["line"]});
+    // google.charts.setOnLoadCallback(drawChart);
+    google.setOnLoadCallback(drawChart);
+
+    function drawChart() {
+      
+      var arr = [<%-VArr%>] // time, answer
+      const newArr = [["time", "voltage"]]
+
+      for (let i = 0; i < arr.length; i += 2) {
+        const answer = parseInt(arr[i + 1]);
+        const tmpArr = []
+        tmpArr.push(new Date(arr[i]*1000));
+        tmpArr.push(parseInt(arr[i+1])/1000);
+        if (tmpArr[1] == 0) continue;
+        newArr.push(tmpArr);
+      }
+
+
+      var data = google.visualization.arrayToDataTable(newArr)
+      var chartDateRange = data.getColumnRange(0);
+      var oneDay = (24*60*60*1000);
+
+      const options = {
+        enableInteractivity: false,
+        tooltip: { trigger: 'none' },
+        series :{
+        0:{
+            enableInteractivity: false,
+            tooltip: 'none'
+          }
+        },
+        height: 250,
+        legend: { position: "up" },
+        axisTitlesPosition: "out",
+        vAxis: {
+            title: '',
+            titleTextStyle: { color: '#0b9727',fontSize:20,italic:false },
+            textStyle: {
+                fontSize: 10,
+                color: "#c9c9c9",
+            },
+          gridlines: {count:5},
+        },      // 縱軸設定
+        hAxis: {
+            /*
+            viewWindowMode:'explicit',
+            viewWindow: {
+              //min: new Date(chartDateRange.max.getTime() - oneDay),
+              min: chartDataRange.min
+						  max: chartDateRange.max
+            },
+            */
+            textStyle: {
+                fontSize: 10,
+                color: "#c9c9c9",
+            },
+        },      // 橫軸設定
+
+        colors: ["#6f87bf","#95d57f","#fff494", "#ffa061"],
+      };
+      var chart = new google.charts.Line(document.getElementById("voltage_chart"));
+      chart.draw(data, google.charts.Line.convertOptions(options));
+  }
+</script>
+
+<!-- w3.css script -->
+<script>
+  // Get the Sidebar
+  var mySidebar = document.getElementById("mySidebar");
+
+  // Get the DIV with overlay effect
+  var overlayBg = document.getElementById("myOverlay");
+
+  // Toggle between showing and hiding the sidebar, and add overlay effect
+  function w3_open() {
+    if (mySidebar.style.display === 'block') {
+          mySidebar.style.display = 'none';
+          overlayBg.style.display = "none";
+    } else {
+        mySidebar.style.display = 'block';
+        overlayBg.style.display = "block";
+    }
+  }
+
+  // Close the sidebar with the close button
+  function w3_close() {
+    mySidebar.style.display = "none";
+    overlayBg.style.display = "none";
+  }
+</script>
+
+</body>
+</html>
