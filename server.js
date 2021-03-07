@@ -90,6 +90,7 @@ var menuPromise = new Promise((resolve, reject) => {
 */
 router.get('/', (req, res) => {
         
+      debug('enter /');
     
       res.format({
         html: function() {
@@ -101,6 +102,7 @@ router.get('/', (req, res) => {
 router.get('/room', (req, res) => {
         
     
+      debug('enter room!')
       res.format({
         html: function() {
           res.render('Room')
@@ -108,6 +110,16 @@ router.get('/room', (req, res) => {
       })
 })
 
+router.get('/signIn', (req, res) => {
+        
+      debug('enter Signin');
+    
+      res.format({
+        html: function() {
+          res.render('SignIn')
+        }
+      })
+})
 router.get('/mainPage', (req, res) => {
         
     

@@ -3,13 +3,13 @@
 <title>HOME</title>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
+<link rel="stylesheet" type="text/css" href="css/style.css">
 <link rel="stylesheet" href="https://www.w3schools.com/w3css/4/w3.css">
-<link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Raleway">
 <style>
 body,h1 {font-family: "Raleway", sans-serif}
 body, html {height: 100%}
 .bgimg {
-  background-image: url(./img/menu.png);
+  background-image: url(img/bg_room.png);
   min-height: 100%;
   background-position: center;
   background-size: cover;
@@ -17,42 +17,25 @@ body, html {height: 100%}
 </style>
 <body>
 
-<div class="g-signin2" data-onsuccess="onSignIn"></div>
-<a class="g-signout2" href="#" onclick="signOut()">Sign out</a>
-
-<div class="bgimg w3-display-container w3-animate-opacity w3-text-white">
-    <a href="/mainPage"><h1 class="w3-jumbo w3-button w3-display-left" href="/">Create</h1></a>
-    <a href="/mainPage"><h1 class="w3-jumbo w3-button w3-display-right" href="/">Join</h1></a>
-  <div class="w3-display-bottomleft w3-padding-large">
-    Powered by <a href="#" target="_blank">Logan & Cleo</a>
+<div class="bgimg w3-display-container">
+  <div class="w3-display-middle">
+    <br>
+    <br>
+    <br>
+    <br>
+    <br>
+    <div class="row">
+      <div class="btn" href="#"><span>創建房間</span></div>
+      <div class="btn" href="#" style="float: right;"><span>加入房間</span></div>
+    </div>
+<!--    <div class="btn" href="#"><span>加入房間</span></div>-->
   </div>
+    
+    
 </div>
 
 <script src="https://apis.google.com/js/platform.js" async defer></script>
-<script>
-function onSignIn(googleUser) {
-  var profile = googleUser.getBasicProfile();
-  console.log('ID: ' + profile.getId());
-  console.log('Name: ' + profile.getName());
-  console.log('Given Name: ' + profile.getGivenName());
-  console.log('Family Name: ' + profile.getFamilyName());
-  console.log('Image URL: ' + profile.getImageUrl());
-  console.log('Email: ' + profile.getEmail());
-}
 
- $.get("https://script.google.com/macros/s/Your_Sheet_ID/exec", {
-                "name": profile.getName(),
-                "email": profile.getEmail(),
-   });
-}
-
-function signOut() {
-    var auth2 = gapi.auth2.getAuthInstance();
-    auth2.signOut().then(function () {
-      console.log('User signed out.');
-    });
-  }
-</script>
 <meta name="google-signin-client_id" content="672665655366-d53mfsp6dbd3shopa8hp6vjts27sknig.apps.googleusercontent.com">
 </body>
 </html>

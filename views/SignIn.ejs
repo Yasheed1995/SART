@@ -1,0 +1,109 @@
+<!DOCTYPE html>
+<html>
+<title>HOME</title>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<link rel="stylesheet" href="https://www.w3schools.com/w3css/4/w3.css">
+<link rel="stylesheet" type="text/css" href="css/style_Signin.css">
+<style>
+body,h1 {font-family: "Raleway", sans-serif}
+body, html {height: 100%}
+.bgimg {
+  background-image: url(img/bg_login.png);
+  min-height: 100%;
+  background-position: center;
+  background-size: cover;
+}
+</style>
+<body>
+  
+
+
+<div class="bgimg">
+  <div class="w3-container">
+    <div class="w3-display-middle">
+      <br>
+      <br>
+      <br>
+      
+      <div class="box-login login ">
+        
+        <img src="img/ic_user.png" style="display: block;margin: 15px auto;" width="37px" height="45px">
+        <div class="text">會員登入</div>
+        <div class="login">
+          <form action="/action_page.php">
+            <input type="text" id="fname" name="firstname" placeholder="帳號">
+            <br>
+            <br>
+            <input type="text" id="lname" name="lastname" placeholder="密碼">
+            <br>
+            <br>
+            
+<!--            <div class="g-signin2" data-width="200px" data-onsuccess="onSignIn" data-auto-logout-link="true" style="display:inline-block">-->
+<!--            </div>-->
+<!--            -->
+<!--            <div class="fb-login-button" data-width="200px" data-size="large" data-button-type="login_with" data-layout="default" data-auto-logout-link="true" data-use-continue-as="false"style="display:inline-block">-->
+<!--            </div>-->
+            
+            <button class="loginBtn loginBtn--google">
+              Login with Google
+            </button>
+            
+            <button class="loginBtn loginBtn--facebook">
+              Login with Facebook
+            </button>
+            
+
+            <br>
+            <br>
+            <input type="submit" value="登入">
+            <br>
+            <br>
+          </form>
+        </div> <!-- class: login  -->
+      </div>
+    </div>
+  </div>
+
+  
+  
+</div>
+
+<script src="https://apis.google.com/js/platform.js" async defer></script>
+<script>
+function onSignIn(googleUser) {
+  var profile = googleUser.getBasicProfile();
+  console.log(profile)
+  console.log('ID: ' + profile.getId());
+  console.log('Name: ' + profile.getName());
+  console.log('Given Name: ' + profile.getGivenName());
+  console.log('Family Name: ' + profile.getFamilyName());
+  console.log('Image URL: ' + profile.getImageUrl());
+  console.log('Email: ' + profile.getEmail());
+}
+
+function signOut() {
+    var auth2 = gapi.auth2.getAuthInstance();
+    auth2.signOut().then(function () {
+      console.log('User signed out.');
+    });
+  }
+</script>
+  <script>
+    window.fbAsyncInit = function() {
+      FB.init({
+        appId            : '3514085212052963',
+        autoLogAppEvents : true,
+        xfbml            : true,
+        version          : 'v10.0'
+      });
+    };
+
+  </script>
+  <script async defer crossorigin="anonymous" src="https://connect.facebook.net/en_US/sdk.js"></script>
+  
+<meta name="google-signin-client_id" content="444939712997-9881518a3c3qakmuqt5ofec6i73ksikd.apps.googleusercontent.com">
+</body>
+</html>
+
+
