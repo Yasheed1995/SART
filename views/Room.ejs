@@ -25,18 +25,36 @@ body, html {height: 100%}
     <br>
     <br>
     <div class="row">
-      <div class="btn" href="#"><span>創建房間</span></div>
-      <div class="btn" href="#" style="float: right;"><span>加入房間</span></div>
+      <button class="btn" onclick="createRoom();"><span>創建房間</span></button>
+      <div class="btn" style="float: right;" onclick="createRoom();"><span>加入房間</span></div>
     </div>
 <!--    <div class="btn" href="#"><span>加入房間</span></div>-->
   </div>
     
     
 </div>
-
-<script src="https://apis.google.com/js/platform.js" async defer></script>
-
-<meta name="google-signin-client_id" content="672665655366-d53mfsp6dbd3shopa8hp6vjts27sknig.apps.googleusercontent.com">
+  
+<!--  <% console.log(userdata)       %>-->
+  <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
+  <script>
+    function createRoom() {
+      var myUser = <%-JSON.stringify(userdata)%>;
+      console.log(myUser)
+      axios.post('/createRoom', 
+        JSON.stringify(myUser)
+      )
+      .then(function (response) {
+        console.log(response.data);
+        window.location = '/mainPage/'+ response.data.room
+      })
+      .catch(function (error) {
+        window.location = '/Signin'
+        console.log(error);
+      });
+      //alert(`created room #${}`);   
+    }
+    
+  </script>
 </body>
 </html>
 

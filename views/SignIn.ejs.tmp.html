@@ -31,11 +31,11 @@ body, html {height: 100%}
         <img src="img/ic_user.png" style="display: block;margin: 15px auto;" width="37px" height="45px">
         <div class="text">會員登入</div>
         <div class="login">
-          <form action="/login" method="post">
-            <input type="text" id="fname" name="account" placeholder="帳號">
+          <form>
+            <input type="text" id="fname" name="firstname" placeholder="帳號">
             <br>
             <br>
-            <input type="text" id="lname" name="password" placeholder="密碼">
+            <input type="text" id="lname" name="lastname" placeholder="密碼">
             <br>
             <br>
             
@@ -57,8 +57,7 @@ body, html {height: 100%}
 
             <br>
             <br>
-            <input type="submit" value="登入" >
-<!--            <button><a href="http://localhost:34000/Room">hi</a></button>-->
+            <input type="submit" value="登入" onclick="checkIfLoggedIn;">
             <br>
             <br>
           </form>
@@ -67,8 +66,10 @@ body, html {height: 100%}
     </div>
   </div>
 
+  
+  
 </div>
-<script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
+
 <script src="https://apis.google.com/js/platform.js" async defer></script>
 <script>
 function onSignIn(googleUser) {
@@ -84,40 +85,27 @@ function onSignIn(googleUser) {
   var myUserEntity = {};
   myUserEntity.Id = profile.getId();
   myUserEntity.Name = profile.getName();
-  myUserEntity.email = profile.getEmail();
   
   //Store the entity object in sessionStorage where it will be accessible from all pages of your site.
-  //sessionStorage.setItem('myUserEntity',JSON.stringify(myUserEntity));
-
-  axios.post('/loginWithGoogle', 
-    JSON.stringify(myUserEntity)
-  )
-  .then(function (response) {
-    console.log(response.config.data);
-    //window.location = '/Room'
-
-  })
-  .catch(function (error) {
-    console.log(error);
-    window.location="/Signin"
-  });
+  sessionStorage.setItem('myUserEntity',JSON.stringify(myUserEntity));
+  
   //alert(profile.getName());   
 }
   
-//function checkIfLoggedIn()
-//{
-//  if(sessionStorage.getItem('myUserEntity') == null){
-//    console.log("not logged in");
-//    //Redirect to login page, no user entity available in sessionStorage
-//    //window.location.href='http://www.w3schools.com';
-//  } else {
-//    //User already logged in
-//    var userEntity = {};
-//    console.log("logged in");
-//    userEntity = JSON.parse(sessionStorage.getItem('myUserEntity'));
-//    //window.location.href='http://www.w3schools.com';
-//  }
-//}
+  function checkIfLoggedIn()
+  {
+    if(sessionStorage.getItem('myUserEntity') == null){
+      console.log("not logged in");
+      //Redirect to login page, no user entity available in sessionStorage
+      window.location.href='Signin.ejs';
+    } else {
+      //User already logged in
+      var userEntity = {};
+      console.log("logged in");
+      userEntity = JSON.parse(sessionStorage.getItem('myUserEntity'));
+      window.location.href='111';
+    }
+  }
 
 function signOut() {
     var auth2 = gapi.auth2.getAuthInstance();
@@ -127,49 +115,49 @@ function signOut() {
     sessionStorage.clear();
   }
 </script>
-<!--  <script>-->
-<!--    window.fbAsyncInit = function() {-->
-<!--      FB.init({-->
-<!--        appId   : 3514085212052963,-->
-<!--        oauth   : true,-->
-<!--        status  : true, // check login status-->
-<!--        cookie  : true, // enable cookies to allow the server to access the session-->
-<!--        xfbml   : true, // parse XFBML-->
-<!--        version : "v10.0"-->
-<!--      });-->
-<!--      -->
-<!--    };-->
-<!--    -->
-<!--    function fb_login(){-->
-<!--      FB.login(function(response) {-->
-<!--        console.log("we");-->
-<!--        if (response.authResponse) {-->
-<!--          console.log('Welcome!  Fetching your information.... ');-->
-<!--          console.log(response); // dump complete info-->
-<!--          access_token = response.authResponse.accessToken; //get access token-->
-<!--          user_id = response.authResponse.userID; //get FB UID-->
-<!--          -->
-<!--          FB.api('/me', function(response) {-->
-<!--            user_email = response.email; //get user email-->
-<!--            // you can store this data into your database             -->
-<!--          });-->
-<!--          -->
-<!--        } else {-->
-<!--          //user hit cancel button-->
-<!--          console.log('User cancelled login or did not fully authorize.');-->
-<!--          -->
-<!--        }-->
-<!--      }, {-->
-<!--        scope: 'public_profile,email'-->
-<!--      });-->
-<!--    }-->
-<!--    (function() {-->
-<!--      var e = document.createElement('script');-->
-<!--      e.src = document.location.protocol + '//connect.facebook.net/en_US/all.js';-->
-<!--      e.async = true;-->
-<!--      //document.getElementById('fb_root').appendChild(e);-->
-<!--    }());-->
-<!--</script>-->
+  <script>
+    window.fbAsyncInit = function() {
+      FB.init({
+        appId   : 3514085212052963,
+        oauth   : true,
+        status  : true, // check login status
+        cookie  : true, // enable cookies to allow the server to access the session
+        xfbml   : true, // parse XFBML
+        version : "v10.0"
+      });
+      
+    };
+    
+    function fb_login(){
+      FB.login(function(response) {
+        console.log("we");
+        if (response.authResponse) {
+          console.log('Welcome!  Fetching your information.... ');
+          console.log(response); // dump complete info
+          access_token = response.authResponse.accessToken; //get access token
+          user_id = response.authResponse.userID; //get FB UID
+          
+          FB.api('/me', function(response) {
+            user_email = response.email; //get user email
+            // you can store this data into your database             
+          });
+          
+        } else {
+          //user hit cancel button
+          console.log('User cancelled login or did not fully authorize.');
+          
+        }
+      }, {
+        scope: 'public_profile,email'
+      });
+    }
+    (function() {
+      var e = document.createElement('script');
+      e.src = document.location.protocol + '//connect.facebook.net/en_US/all.js';
+      e.async = true;
+      //document.getElementById('fb_root').appendChild(e);
+    }());
+</script>
   <script async defer crossorigin="anonymous" src="https://connect.facebook.net/en_US/sdk.js"></script>
   
 <meta name="google-signin-client_id" content="444939712997-9881518a3c3qakmuqt5ofec6i73ksikd.apps.googleusercontent.com">

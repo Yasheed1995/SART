@@ -5,11 +5,12 @@
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <link rel="stylesheet" href="https://www.w3schools.com/w3css/4/w3.css">
 <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Raleway">
+<link rel="shortcut icon" href="#"/>
 <style>
 body,h1 {font-family: "Raleway", sans-serif}
 body, html {height: 100%}
 .bgimg {
-  background-image: url(img/bg_main.png);
+  background-image: url(/img/bg_main.png);
   min-height: 100%;
   background-position: center;
   background-size: cover;
@@ -30,26 +31,34 @@ input[type=checkbox]:checked ~ label > img {
 }
 </style>
 <body>
-
+  
   <div class="bgimg">
-    <div class="w3-display-bottom">
-      <script src="https://ajax.googleapis.com/ajax/libs/jquery/2.1.1/jquery.min.js"></script>
-      <input type="file" id="upload" />
-      
-      <audio id="audio" controls>
-        <source src="" id="src" />
-      </audio>
-      
-      <input type='file' />
-      <br>
-      <div class="container">
-        <input type="checkbox" id="zoomCheck">
-        <label for="zoomCheck">
-          <img id="myImg" src="#">
-        </label>
-      </div>
-    </div>
-  </div>
+    <h1> This is mainPage!</h1>
+    <h3> Room #: <%-data.room%></h3> 
+    <h3> User ID: <%-data.user%></h3> 
+    
+    
+    
+<!--    <div class="w3-display-bottom">-->
+<!--      <script src="https://ajax.googleapis.com/ajax/libs/jquery/2.1.1/jquery.min.js"></script>-->
+<!--      <input type="file" id="upload" />-->
+<!--      -->
+<!--      <audio id="audio" controls>-->
+<!--        <source src="" id="src" />-->
+<!--      </audio>-->
+<!--      -->
+<!--      <input type='file' />-->
+<!--      <br>-->
+<!--      <div class="container">-->
+<!--        <input type="checkbox" id="zoomCheck">-->
+<!--        <label for="zoomCheck">-->
+<!--          <img id="myImg" src="#">-->
+<!--        </label>-->
+<!--      </div>-->
+<!--    </div>-->
+    
+    
+  </div> 
 
 <script>
 window.addEventListener('load', function() {
@@ -74,6 +83,7 @@ function handleFiles(event) {
 
 document.getElementById("upload").addEventListener("change", handleFiles, false);
 </script>
+
 </body>
 </html>
 
