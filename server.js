@@ -64,7 +64,7 @@ router.get('/signIn', (req, res) => {
     
       res.format({
         html: function() {
-          res.render('/SignIn')
+          res.render('SignIn')
         }
       })
 })
