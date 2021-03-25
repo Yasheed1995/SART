@@ -5,9 +5,12 @@ const express = require('express');
 const bodyParser = require('body-parser');
 const http = require('http');
 const path = require('path');
+var busboy = require('connect-busboy'); //middleware for form/file upload
+var fs = require('fs-extra');  
+const fileUpload = require('express-fileupload');
 
-//const app = express();
-const app = require("https-localhost")()
+const app = express();
+//const app = require("https-localhost")()
 const port = process.env.PORT || 34000;
 const server = http.createServer(app);
 const db = require('./modules/db');
@@ -19,6 +22,8 @@ app.set('view engine', 'ejs');
 app.use(express.static(path.join(__dirname, 'public')));
 app.use(bodyParser.urlencoded({extended:false}));
 app.locals.moment = require('moment');
+
+app.use(fileUpload());
 
 db.connect();
 server.listen(port);
@@ -180,6 +185,30 @@ app.post('/createRoom', (req, res) => {
 
   }
 })
+
+app.post('/upload', function(req, res) {
+  let sampleFile;
+  let uploadPath;
+  
+  console.log(req.body);
+  
+  if (!req.files || Object.keys(req.files).length === 0) {
+    return res.status(400).send('No files were uploaded.');
+  }
+  
+  // The name of the input field (i.e. "sampleFile") is used to retrieve the uploaded file
+  sampleFile = req.files.sampleFile;
+  //uploadPath = __dirname + '/public/assets/audio/' + sampleFile.name;
+  uploadPath = __dirname + '/public/assets/audio/' + req.body.id + '.mp3';
+  
+  // Use the mv() method to place the file somewhere on your server
+  sampleFile.mv(uploadPath, function(err) {
+    if (err)
+      return res.status(500).send(err);
+    
+    res.redirect('back');
+  });
+});
 
 app.use('/', router)
 

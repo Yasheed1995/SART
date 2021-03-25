@@ -1,90 +1,232 @@
 <!DOCTYPE html>
 <html>
-<title>HOME</title>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1">
-<link rel="stylesheet" href="https://www.w3schools.com/w3css/4/w3.css">
-<link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Raleway">
-<link rel="shortcut icon" href="#"/>
-<style>
-body,h1 {font-family: "Raleway", sans-serif}
-body, html {height: 100%}
-.bgimg {
-  background-image: url(/img/bg_main.png);
-  min-height: 100%;
-  background-position: center;
-  background-size: cover;
-}
-input[type=checkbox] {
-  display: none;
-}
+  <head>
+    <title>HOME</title>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link rel="stylesheet" href="https://www.w3schools.com/w3css/4/w3.css">
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Raleway">
+    <link rel="stylesheet" type="text/css" href="/css/style_main.css">
+    <link rel="stylesheet" href="https://www.w3schools.com/w3css/4/w3.css">
+    <link rel="shortcut icon" href="#"/>
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
 
-.container img {
-  margin: 100px;
-  transition: transform 0.25s ease;
-  cursor: zoom-in;
-}
-
-input[type=checkbox]:checked ~ label > img {
-  transform: scale(2);
-  cursor: zoom-out;
-}
-</style>
-<body>
+  </head>
   
-  <div class="bgimg">
-    <h1> This is mainPage!</h1>
-    <h3> Room #: <%-data.room%></h3> 
-    <h3> User ID: <%-data.user%></h3> 
+  <script>
     
-    
-    
-<!--    <div class="w3-display-bottom">-->
-<!--      <script src="https://ajax.googleapis.com/ajax/libs/jquery/2.1.1/jquery.min.js"></script>-->
-<!--      <input type="file" id="upload" />-->
-<!--      -->
-<!--      <audio id="audio" controls>-->
-<!--        <source src="" id="src" />-->
-<!--      </audio>-->
-<!--      -->
-<!--      <input type='file' />-->
-<!--      <br>-->
-<!--      <div class="container">-->
-<!--        <input type="checkbox" id="zoomCheck">-->
-<!--        <label for="zoomCheck">-->
-<!--          <img id="myImg" src="#">-->
-<!--        </label>-->
-<!--      </div>-->
-<!--    </div>-->
-    
-    
-  </div> 
+    $(document).ready(function(){
+      
+      var img_ele = null,
+      x_cursor = 0,
+      y_cursor = 0,
+      x_img_ele = 0,
+      y_img_ele = 0;
+      
+      document.getElementById('drag-img').addEventListener('mousedown', start_drag);
+      document.getElementById('container').addEventListener('mousemove', while_drag);
+      document.getElementById('container').addEventListener('mouseup', stop_drag);
+      document.getElementById('zoomout').addEventListener('click', function() {
+        zoom(0.5);
+      });
+      document.getElementById('zoomin').addEventListener('click', function() {
+        zoom(1.5);
+      });
+      
+      
+      var audio_cnt = 0;
+      var count_audio = 0;
+      var audio_available = [0,1,2,3,4,5,6,7,8,9];
+      var audio_unavailable = [];
+      
+      $("#add_audio").click(function(){
+        audio_cnt = audio_available.pop();
+        audio_unavailable.push(audio_cnt);
+        console.log("audio available:"+audio_available);
+        console.log("audio unavailable:"+audio_unavailable);
+        if (count_audio >= 10) {
+          alert('audio cannot exceed 10 items!! please remove your audio track.');
+          return;
+        }
+        var audio_ele_str = ("<li id=\"audio_li_"+audio_cnt+"\"><button class=\"open-button\" onclick=\"openForm("+audio_cnt+")\">edit</button><audio id=\"audio"+audio_cnt+"\" controls> <source id=\"src"+audio_cnt+"\" src=\"\"></audio><button id=\"remove_audio"+audio_cnt+"\">rm</button></li>")
+        $("ul").append(audio_ele_str);
+        console.log('added audio :'+audio_cnt);
+        document.getElementById("remove_audio"+audio_cnt).addEventListener("click", remove_audio_track, false);
+        document.getElementById("src"+audio_cnt).src = "/assets/audio/"+audio_cnt+".mp3"
+        document.getElementById("audio"+audio_cnt).load();
+        count_audio += 1;
+      });
+      
+      function remove_audio_track(event) {
+        console.log(audio_cnt)
+        console.log(event.target.id)
+        var n = event.target.id.slice(-1);
+        audio_available.push(parseInt(n));
+        var index = audio_unavailable.indexOf(parseInt(n));
+        console.log(index)
+        if (index !== -1) {
+          audio_unavailable.splice(index, 1);
+        }
+        
+        console.log("audio available:"+audio_available);
+        console.log("audio unavailable:"+audio_unavailable);
 
-<script>
-window.addEventListener('load', function() {
-  document.querySelector('input[type="file"]').addEventListener('change', function() {
-      if (this.files && this.files[0]) {
-          var img = document.querySelector('img');
-          img.onload = () => {
-              URL.revokeObjectURL(img.src);  // no longer needed, free memory
-          }
-
-          img.src = URL.createObjectURL(this.files[0]); // set src to blob url
+        var li_to_remove = "#audio_li_" + n
+        $(li_to_remove).remove();
+        console.log('removed audio :'+n);
+        count_audio -= 1;
       }
-  });
-});
-</script>
-<script>
-function handleFiles(event) {
-    var files = event.target.files;
-    $("#src").attr("src", URL.createObjectURL(files[0]));
-    document.getElementById("audio").load();
-}
 
-document.getElementById("upload").addEventListener("change", handleFiles, false);
-</script>
+      function zoom(zoomincrement) {
+        img_ele = document.getElementById('drag-img');
+        var pre_width = img_ele.getBoundingClientRect().width, pre_height = img_ele.getBoundingClientRect().height;
+        img_ele.style.width = (pre_width * zoomincrement) + 'px';
+        img_ele.style.height = (pre_height * zoomincrement) + 'px';
+        img_ele = null;
+      }
+      
+      function start_drag() {
+        img_ele = this;
+        x_img_ele = window.event.clientX - document.getElementById('drag-img').offsetLeft;
+        y_img_ele = window.event.clientY - document.getElementById('drag-img').offsetTop;
+        
+      }
+      
+      function stop_drag() {
+        img_ele = null;
+      }
+      
+      function while_drag() {
+        var x_cursor = window.event.clientX;
+        var y_cursor = window.event.clientY;
+        if (img_ele !== null) {
+          img_ele.style.left = (x_cursor - x_img_ele) + 'px';
+          img_ele.style.top = ( window.event.clientY - y_img_ele) + 'px';
+          console.log(img_ele.style.left+' - '+img_ele.style.top);
+        }
+      }
+    });
+  </script>
 
-</body>
+  <body>
+    <div class='bgimg'>
+      <div class="navbar">
+        <div class="logo"><img src="/img/logo.png" width="200px"></div>
+        <div class="dot"><img src="/img/ic_dot.png" width="15px"></div>
+        
+        <div class="search-container">
+          <form action="/action_page.php">
+            <input type="text" placeholder="請輸入房間編號" name="search" class="searchbar">
+            <button type="submit">GO</button>
+            <button class="user"><img src="/img/ic_user.png" width="22px"></button>
+          </form> <!-- end form-->
+        </div> <!-- end search-container -->
+      </div> <!--end navbar -->
+
+      <hr width="100%" color="#D0D9EE" />
+      <div class="title-1">
+        <img src="/img/ic_track.png" class="title" width="180px">
+      </div>
+      <div class="AudioTrack">
+        <ul>
+<!--          <li id="audio_li_0">-->
+<!--            <button id="upload0">load music</button>-->
+<!--            <button class="open-button" onclick="openForm(0)">edit</button>-->
+<!--            <audio id="audio0" controls>-->
+<!--              <source id="src0" src="">-->
+<!--            </audio>-->
+<!--            <button id="remove_audio0">remove</button>-->
+<!--          </li>-->
+        </ul>
+        <img id="add_audio" width="40px" id="btn2" src="/img/ic_addaudio.png">
+      </div>
+      
+      <div class="title-2">
+        <img src="/img/ic_notation.png" class="title" width="140px">
+      </div>
+      
+      <div class="Notation">
+        <div class="main">
+
+          <div id='container'>
+            <img ondragstart="return false" id="drag-img" src="/img/music1.png" />
+          </div>
+          
+        </div>
+        <button id="zoomout" class="zoombutton"><img src="/img/zoom_out.svg" width="25px"></button>
+        <button id="zoomin" class="zoombutton"><img src="/img/zoom_in.svg" width="25px"></button>
+        
+      </div>
+      
+      <div class="Player">
+        <button><img src="/img/ic_vol.png" class="player-btn1" width="44px"></button>
+        <button><img src="/img/ic_stop.png" class="player-btn2" width="38px"></button>
+        <button><img src="/img/ic_play.png" class="player-btn3" width="160px"></button>
+      </div>
+      <div class="player2">
+        
+      <div class="form-popup" id="myForm" class="form-container">
+        <form ref='uploadForm' 
+          id='uploadForm' 
+          action='/upload' 
+          method='post' 
+          encType="multipart/form-data">
+          <h1>Upload file!</h1>
+          <input type="text" name="name">
+          <input id="buttonid" type="hidden" name="id" display="hidden">
+          <input type="file" name="sampleFile" />
+          <input type='submit' value='Upload!' />
+          <button type="button" class="btn cancel" onclick="closeForm()">Close</button>
+        </form>  
+      </div>
+<!--        -->
+<!--        <div class="form-popup" id="myForm">-->
+<!--          <form action="/action_page.php" class="form-container">-->
+<!--            <h1>Login</h1>-->
+<!--            -->
+<!--            <label for="email"><b>Email</b></label>-->
+<!--            <input type="text" placeholder="Enter Email" name="email" required>-->
+<!--            -->
+<!--            <label for="psw"><b>Password</b></label>-->
+<!--            <input type="password" placeholder="Enter Password" name="psw" required>-->
+<!--            -->
+<!--            <button type="submit" class="btn">Login</button>-->
+<!--            <button type="button" class="btn cancel" onclick="closeForm()">Close</button>-->
+<!--          </form>-->
+<!--        </div>-->
+        
+
+
+      </div>
+      <div class="Metronome">Metronome</div>
+      
+      <img src="/img/ic_video.png" class="video" width="54px">
+      <div class="Videocall">
+        <div class="video-container">
+          <p>線上視訊會議 Video Call</p>
+          <input type="text" placeholder="貼上聊天室連結" name="search" class="searchbar-2">
+          <button type="submit" class="vd-submit">送出</button>
+        </div>
+      </div>
+      <div>
+      <hr width="100%" color="#D0D9EE" />
+      
+      </div>
+    </div>
+    <script src="https://www.gstatic.com/firebasejs/8.3.1/firebase-app.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/8.3.1/firebase-storage.js"></script>
+    <script>
+      function openForm(myid) {
+        document.getElementById("buttonid").value=myid;
+        document.getElementById("myForm").style.display = "block";
+      }
+      
+      function closeForm() {
+        document.getElementById("myForm").style.display = "none";
+      }
+
+    </script>
+  </body>
+
 </html>
-
-
+        

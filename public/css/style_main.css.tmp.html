@@ -1,0 +1,400 @@
+<style>
+
+*{
+	position: relative;
+	box-sizing: border-box;
+}
+body{
+	font-family: arial;
+		background-image: url(file:///Users/logan1436/Documents/workspace/SART/sigfox-master/public/css/img/bg_main.png);
+	position: fixed;
+	top: 0;
+	left: 0;
+	width: 100%;
+	height: 100%;
+}
+
+
+button{
+	cursor: pointer;
+}
+
+
+hr.line{
+	border: 2px solid #D0D9EE;
+	border-bottom: none;
+	margin: 0;
+	width: 85%;
+}
+
+
+.logo{
+	display: inline-block;
+	margin: 20px 0 5px 146px;
+}
+
+
+.dot{
+	display: inline-block;
+	position: relative;
+	left: 550px;
+}
+
+
+.search-container{
+	text-align:center;
+	top: 12px;
+	width: 360px;
+	height: 44px;
+	background-color: none;
+	border: 1px solid #A8B2F9;
+	border-radius: 7px;
+	opacity: 1;
+	box-shadow: 1px 5px 10px rgba(129,167,201,0.6);
+	position: absolute;
+	top: 10px;
+	left: 1300px;
+}
+
+
+.search-container button {
+  padding: 5px 10px;
+  margin-top: 6px;
+  margin-right: 16px;
+  background: none;
+  font-size: 17px;
+  font-weight: bold;
+  border: none;
+  cursor: pointer;
+}
+
+
+.searchbar{
+	width: 235px;
+	height: 28px;
+	border: 1px solid #7391F9;
+	border-radius: 20px;
+	padding: 10px;
+	margin: auto;
+}
+
+
+.searchbar-2{
+	width: 388px;
+	height: 30px;
+	border: 1px solid #7391F9;
+	border-radius: 10px;
+	padding: 10px;
+}
+
+
+.video-container button{
+	width: 64px;
+	height: 30px;
+	background-color: #97BEC4;
+	color: #fff;
+	border: 1px solid #7391F9;
+	border-radius: 12px;
+	cursor: pointer;
+}
+
+
+.user{
+	position: absolute;
+	top:-4px;
+	left: 305px;
+}
+
+
+
+.title-1{
+	position: absolute;
+	left: 130px;
+	top: 140px;
+}	
+
+
+.AudioTrack{
+	width: 800px;
+	height: 264px;
+	background-color: rgba(244,246,246, 0.8);
+	border: 1px solid #D8E0F1;
+	border-radius: 6px;
+	box-shadow: 0px 0px 5px rgba(249,233,170, 0.5);
+	position: absolute;
+	left: 130px;
+	top: 180px;
+	padding: 40px;
+	overflow:scroll;
+	overflow-x:hidden;
+	overflow-y:auto;
+}
+
+
+audio{
+	width: 662px;
+	height: 36px;
+	margin: auto;
+	color: #000;
+	font-size: 20px;
+	padding: 10px;
+	opacity: 85%;
+
+
+}
+
+#add_audio {
+	display:block;
+	margin: 0 auto;
+	cursor: pointer;
+}
+
+
+.title-2{
+	position: absolute;
+	left: 1000px;
+	top: 140px;
+}	
+
+
+.Notation{
+	width: 750px;
+	height: 800px;
+	background-color: #F4F6F6;
+	border: 1px solid #D8E0F1;
+	border-radius: 6px;
+	opacity: 85%;
+	box-shadow: 0px 0px 5px rgba(249,233,170, 0.5);
+	position: absolute;
+	left: 1000px;
+	top: 180px;
+}
+
+
+.Notation .main{
+	width: 680px;
+	height: 541px;
+	overflow: hidden;
+	border: 1px solid #D8E0F1;
+	margin: 30px auto;
+	
+}
+
+.zoombutton{
+	margin: 5px;
+	left:600px;
+	padding: 6px;
+}
+
+
+.Player{
+	width: 450px;
+	height: 191px;
+	border: 1px solid #66EAFF;
+	border-radius: 6px;
+	background-color: rgba(0,0,0,0.6);
+	box-shadow: 0.5px 5px 10px rgba(129,167,201,0.6);
+	position: absolute;
+	left: -5px;
+	top: 500px;
+}
+.Player button{
+background: none;
+border: none;
+}
+
+.player-btn1{
+position: absolute;
+top: 65px;
+left: 50px;
+}
+
+.player-btn2{
+position: absolute;
+top: 60px;
+left: 110px;
+}
+
+.player-btn3{
+position: absolute;
+top: 0px;
+left: 200px;
+}
+.player2{
+	width: 450px;
+	height: 44px;
+	border: 1px solid #A8B2F9;
+	border-radius: 6px;
+	background-color: #F4F7F6;
+	opacity: 40%;
+	box-shadow: 1px 5px 10px rgba(129,167,201,0.6);
+	position: absolute;
+	left: 0;
+	top: 720px;
+}
+
+
+
+.Metronome{
+	width: 430px;
+	height: 310px;
+	background-color: #000000;
+	opacity: 60%;
+	border-radius: 10px;
+	box-shadow: 0px 3px 6px rgba(129,167,201,0.6);
+	position: absolute;
+	left: 500px;
+	top: 480px;
+}
+
+
+.Videocall{
+	width: 480px;
+	height: 81px;
+	border-radius: 6px;
+	background-color: rgba(241,244,243,0.4);
+	opacity: 100%;
+	box-shadow: 1px 5px 10px rgba(129,167,201,0.6);
+	position: absolute;
+	left: 178px;
+	top: 860px;
+	margin-bottom: 30px;
+	padding-left: 10px;
+}
+
+
+p{
+	letter-spacing: 2px;
+	margin: 10px;
+}
+
+
+.video{
+	position: absolute;
+	left: 102px;
+	top: 875px;
+}
+
+
+* {box-sizing:border-box}
+
+/* Slideshow container */
+.slideshow-container {
+	max-width: 1000px;
+	position: relative;
+	margin: auto;
+}
+
+/* Hide the images by default */
+.mySlides {
+	display: none;
+}
+
+/* Next & previous buttons */
+.prev, .next {
+	cursor: pointer;
+	position: absolute;
+	top: 50%;
+	width: auto;
+	margin-top: -22px;
+	padding: 16px;
+	color: white;
+	font-weight: bold;
+	font-size: 18px;
+	transition: 0.6s ease;
+	border-radius: 0 3px 3px 0;
+	user-select: none;
+}
+
+/* Position the "next button" to the right */
+.next {
+	right: 0;
+	border-radius: 3px 0 0 3px;
+}
+
+/* On hover, add a black background color with a little bit see-through */
+.prev:hover, .next:hover {
+	background-color: rgba(0,0,0,0.8);
+}
+
+/* Caption text */
+.text {
+	color: #f2f2f2;
+	font-size: 15px;
+	padding: 8px 12px;
+	position: absolute;
+	bottom: 8px;
+	width: 100%;
+	text-align: center;
+}
+
+/* Number text (1/3 etc) */
+.numbertext {
+	color: #f2f2f2;
+	font-size: 12px;
+	padding: 8px 12px;
+	position: absolute;
+	top: 0;
+}
+
+/* The dots/bullets/indicators */
+.dot {
+	cursor: pointer;
+	height: 15px;
+	width: 15px;
+	margin: 0 2px;
+	background-color: #bbb;
+	border-radius: 50%;
+	display: inline-block;
+	transition: background-color 0.6s ease;
+}
+
+.active, .dot:hover {
+	background-color: #717171;
+}
+
+/* Fading animation */
+.fade {
+	-webkit-animation-name: fade;
+	-webkit-animation-duration: 1.5s;
+	animation-name: fade;
+	animation-duration: 1.5s;
+}
+
+/*@-webkit-keyframes fade {*/
+/*	from {opacity: .4} */
+/*	to {opacity: 1}*/
+/*}*/
+/**/
+/*@keyframes fade {*/
+/*	from {opacity: .4} */
+/*	to {opacity: 1}*/
+/*}*/
+
+/*.mySlides {*/
+/*	transition: -webkit-transform 0.25s ease;*/
+/*}*/
+
+/*.mySlides:hover {*/
+/*	-webkit-transform: scale(2);*/
+/*}*/
+
+#drag-img {
+	cursor: move;
+	position: relative;
+	width: 100%;
+}
+
+body,h1 {font-family: "Raleway", sans-serif}
+body, html {height: 100%}
+.bgimg {
+	background-image: url(file:///Users/logan1436/Documents/workspace/SART/sigfox-master/public/css/img/bg_main.png);
+	min-height: 100%;
+	background-position: center;
+	background-size: cover;
+}
+.mySlides {display:none;}
+
+.image-upload>input {
+	display: none;
+}</style>

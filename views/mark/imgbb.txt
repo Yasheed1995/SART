@@ -1,8 +1,0 @@
-mark red 01
-<img src="https://i.ibb.co/zZQ5Ln2/mark-red01.png" alt="mark-red01" border="0">
-mark yellow 01
-<img src="https://i.ibb.co/cYTwjHT/mark-yellow01.png" alt="mark-yellow01" border="0">
-mark red 02
-<img src="https://i.ibb.co/XLXNRpz/mark-red02.png" alt="mark-red02" border="0">
-mark yellow 02
-<img src="https://i.ibb.co/4pKCvsw/mark-yellow02.png" alt="mark-yellow02" border="0">
