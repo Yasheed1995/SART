@@ -40,7 +40,7 @@
       var audio_unavailable = [];
       
       $("#add_audio").click(function(){
-        audio_cnt = audio_available.pop();
+        audio_cnt = audio_available.shift();
         audio_unavailable.push(audio_cnt);
         console.log("audio available:"+audio_available);
         console.log("audio unavailable:"+audio_unavailable);
@@ -48,12 +48,22 @@
           alert('audio cannot exceed 10 items!! please remove your audio track.');
           return;
         }
-        var audio_ele_str = ("<li id=\"audio_li_"+audio_cnt+"\"><button class=\"open-button\" onclick=\"openForm("+audio_cnt+")\">edit</button><audio id=\"audio"+audio_cnt+"\" controls> <source id=\"src"+audio_cnt+"\" src=\"\"></audio><button id=\"remove_audio"+audio_cnt+"\">rm</button></li>")
+        
+        var audio_ele_str = 
+          '<li id="audio_li_'+audio_cnt+'">'+
+            '<button class="open-button" onclick="openForm('+audio_cnt+',0)">edit</button>'+
+            '<audio id="audio'+audio_cnt+'" controls> '+
+              '<source id="src'+audio_cnt+'" src="">'+
+            '</audio>'+
+            '<button id="remove_audio'+audio_cnt+'>rm</button>'+
+          '</li>';
+        
         $("ul").append(audio_ele_str);
-        console.log('added audio :'+audio_cnt);
+        
         document.getElementById("remove_audio"+audio_cnt).addEventListener("click", remove_audio_track, false);
-        document.getElementById("src"+audio_cnt).src = "/assets/audio/"+audio_cnt+".mp3"
-        document.getElementById("audio"+audio_cnt).load();
+        
+        openForm(audio_cnt, 0);
+        
         count_audio += 1;
       });
       
@@ -70,13 +80,94 @@
         
         console.log("audio available:"+audio_available);
         console.log("audio unavailable:"+audio_unavailable);
-
+        
         var li_to_remove = "#audio_li_" + n
         $(li_to_remove).remove();
         console.log('removed audio :'+n);
         count_audio -= 1;
+        
+        axios.post('/removeFile', 
+          JSON.stringify({n: n, type: 0})
+        )
+        .then(function (response) {
+          console.log(response.config.data);
+          //window.location = '/Room'
+        })
+        .catch(function (error) {
+          console.log(error);
+          //window.location="/Signin"
+        });
+      }
+      
+      var pic_cnt = 0;
+      var count_picture = 0;
+      var pic_available = [0,1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18,19];
+      var pic_unavailable = [];
+      
+      $("#add_pic").click(function() {
+        pic_cnt = pic_available.shift();
+        pic_unavailable.push(pic_cnt);
+        console.log("pic available:"+pic_available);
+        console.log("pic unavailable:"+pic_unavailable);
+        
+        if (count_picture >= 10) {
+          alert('picture cannot exceed 10 items!! please remove your picture.');
+          return;
+        }
+        
+        var pic_ele_str = 
+          '<div id="pic_li_' + pic_cnt + '" class="column">' + 
+            '<img id="pic_src'+ pic_cnt +'" class="demo cursor" src="" style="width:100%" onclick="currentSlide(' + pic_cnt + ')">' +
+            '<button class="open-button" onclick="openForm('+pic_cnt+',1)">edit</button>'+
+            '<button id="remove_pic' + pic_cnt + '">rm</button>' +
+          '</div>';
+          
+        $("#pic_list").append(pic_ele_str)
+        
+        document.getElementById("remove_pic"+pic_cnt).addEventListener("click", remove_picture, false);
+        
+        openForm(pic_cnt, 1);
+        
+        count_picture += 1;
+      })
+      
+      function remove_picture(event) {
+        console.log(pic_cnt)
+        console.log(event.target.id)
+        
+        var n = event.target.id.slice(-1);
+        
+        pic_available.push(parseInt(n));
+        
+        var index = pic_unavailable.indexOf(parseInt(n));
+        console.log(index)
+        if (index !== -1) {
+          pic_unavailable.splice(index, 1);
+        }
+        
+        console.log("pic available:"+pic_available);
+        console.log("pic unavailable:"+pic_unavailable);
+        
+        var li_to_remove = "#pic_li_" + n
+        $(li_to_remove).remove();
+        console.log('removed pic :'+n);
+        count_picture -= 1;
+        
+        axios.post('/removeFile', 
+          JSON.stringify({n: n, type: 1})
+        )
+        .then(function (response) {
+          console.log(response.config.data);
+          //window.location = '/Room'
+        })
+        .catch(function (error) {
+          console.log(error);
+          //window.location="/Signin"
+        });
       }
 
+      
+      
       function zoom(zoomincrement) {
         img_ele = document.getElementById('drag-img');
         var pre_width = img_ele.getBoundingClientRect().width, pre_height = img_ele.getBoundingClientRect().height;
@@ -89,7 +180,6 @@
         img_ele = this;
         x_img_ele = window.event.clientX - document.getElementById('drag-img').offsetLeft;
         y_img_ele = window.event.clientY - document.getElementById('drag-img').offsetTop;
-        
       }
       
       function stop_drag() {
@@ -100,14 +190,23 @@
         var x_cursor = window.event.clientX;
         var y_cursor = window.event.clientY;
         if (img_ele !== null) {
-          img_ele.style.left = (x_cursor - x_img_ele) + 'px';
-          img_ele.style.top = ( window.event.clientY - y_img_ele) + 'px';
+          if (x_cursor - x_img_ele > 0) 
+            img_ele.style.left = '0px';
+//          else if (x_img_ele - x_cursor < img_ele.style.width)
+//            img_ele.style.left = img_ele.style.width + 'px';
+          else
+            img_ele.style.left = (x_cursor - x_img_ele) + 'px';
+          
+          if (window.event.clientY - y_img_ele > 0)
+            img_ele.style.top = '0px'
+          else
+            img_ele.style.top = ( window.event.clientY - y_img_ele) + 'px';
           console.log(img_ele.style.left+' - '+img_ele.style.top);
         }
       }
     });
   </script>
-
+  
   <body>
     <div class='bgimg'>
       <div class="navbar">
@@ -128,17 +227,8 @@
         <img src="/img/ic_track.png" class="title" width="180px">
       </div>
       <div class="AudioTrack">
-        <ul>
-<!--          <li id="audio_li_0">-->
-<!--            <button id="upload0">load music</button>-->
-<!--            <button class="open-button" onclick="openForm(0)">edit</button>-->
-<!--            <audio id="audio0" controls>-->
-<!--              <source id="src0" src="">-->
-<!--            </audio>-->
-<!--            <button id="remove_audio0">remove</button>-->
-<!--          </li>-->
-        </ul>
-        <img id="add_audio" width="40px" id="btn2" src="/img/ic_addaudio.png">
+        <ul></ul>
+        <img id="add_audio" width="40px" src="/img/ic_addaudio.png">
       </div>
       
       <div class="title-2">
@@ -149,13 +239,31 @@
         <div class="main">
 
           <div id='container'>
-            <img ondragstart="return false" id="drag-img" src="/img/music1.png" />
+
+            <div class="container">
+              <div class="mySlides">
+<!--                <div class="numbertext">1 / 6</div>-->
+                <img ondragstart="return false" id="drag-img" src="" />
+              </div>
+              
+<!--              <a class="prev" onclick="plusSlides(-1)">❮</a>-->
+<!--              <a class="next" onclick="plusSlides(1)">❯</a>-->
+              
+            </div>
           </div>
           
         </div>
+        
         <button id="zoomout" class="zoombutton"><img src="/img/zoom_out.svg" width="25px"></button>
         <button id="zoomin" class="zoombutton"><img src="/img/zoom_in.svg" width="25px"></button>
+        <img id="add_pic" width="40px" id="btn2" src="/img/ic_addaudio.png">
         
+        <div id="pic_list" class="row">
+<!--          <div class="column">-->
+<!--            <img class="demo cursor" src="/img/music1.png" style="width:100%" onclick="currentSlide(1)">-->
+<!--          </div>-->
+        </div>
+          
       </div>
       
       <div class="Player">
@@ -174,28 +282,13 @@
           <h1>Upload file!</h1>
           <input type="text" name="name">
           <input id="buttonid" type="hidden" name="id" display="hidden">
+          <input id="buttonid2" type="hidden" name="type" display="hidden">
           <input type="file" name="sampleFile" />
-          <input type='submit' value='Upload!' />
+<!--          <input type='submit' value='Upload!' />-->
+          <button type='submit' value=Upload!>Upload!</button>
           <button type="button" class="btn cancel" onclick="closeForm()">Close</button>
         </form>  
       </div>
-<!--        -->
-<!--        <div class="form-popup" id="myForm">-->
-<!--          <form action="/action_page.php" class="form-container">-->
-<!--            <h1>Login</h1>-->
-<!--            -->
-<!--            <label for="email"><b>Email</b></label>-->
-<!--            <input type="text" placeholder="Enter Email" name="email" required>-->
-<!--            -->
-<!--            <label for="psw"><b>Password</b></label>-->
-<!--            <input type="password" placeholder="Enter Password" name="psw" required>-->
-<!--            -->
-<!--            <button type="submit" class="btn">Login</button>-->
-<!--            <button type="button" class="btn cancel" onclick="closeForm()">Close</button>-->
-<!--          </form>-->
-<!--        </div>-->
-        
-
 
       </div>
       <div class="Metronome">Metronome</div>
@@ -215,18 +308,62 @@
     </div>
     <script src="https://www.gstatic.com/firebasejs/8.3.1/firebase-app.js"></script>
     <script src="https://www.gstatic.com/firebasejs/8.3.1/firebase-storage.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
     <script>
-      function openForm(myid) {
+      function openForm(myid, mytype) {
         document.getElementById("buttonid").value=myid;
+        document.getElementById("buttonid2").value=mytype;
         document.getElementById("myForm").style.display = "block";
       }
       
       function closeForm() {
+        if (document.getElementById("buttonid2").value === '0') {
+          var audio_cnt = document.getElementById("buttonid").value;
+          document.getElementById("src"+audio_cnt).src = "/assets/audio/"+audio_cnt+".mp3"
+          document.getElementById("audio"+audio_cnt).load();
+        }
+        
+        else if (document.getElementById("buttonid2").value === '1') {
+          var pic_cnt = document.getElementById("buttonid").value;
+          document.getElementById("pic_src"+pic_cnt).src = "/assets/image/"+pic_cnt+".png"
+          //document.getElementById("audio"+audio_cnt).load();
+        }
+        
         document.getElementById("myForm").style.display = "none";
+        //console.log('added audio :'+audio_cnt);
+                
+        
       }
-
+    </script>
+    <script>
+      var slideIndex = 1;
+      //showSlides(slideIndex);
+      
+      function plusSlides(n) {
+        showSlides(slideIndex += n);
+      }
+      
+      function currentSlide(n) {
+        showSlides(slideIndex = n);
+      }
+      
+      function showSlides(n) {
+        var i;
+        var slides = document.getElementsByClassName("mySlides");
+        //var dots = document.getElementsByClassName("demo");
+        var captionText = document.getElementById("caption");
+//        if (n > slides.length) {slideIndex = 1}
+//        if (n < 1) {slideIndex = slides.length}
+//        for (i = 0; i < dots.length; i++) {
+//          dots[i].className = dots[i].className.replace(" active", "");
+//        }
+        slides[0].style.display = "block";
+        document.getElementById("drag-img").src = "/assets/image/" + n + ".png";
+        //dots[n].className += " active";
+      }
     </script>
   </body>
 
 </html>
+        
         
