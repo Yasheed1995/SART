@@ -319,13 +319,13 @@
       function closeForm() {
         if (document.getElementById("buttonid2").value === '0') {
           var audio_cnt = document.getElementById("buttonid").value;
-          document.getElementById("src"+audio_cnt).src = "/assets/audio/"+audio_cnt+".mp3"
+          document.getElementById("src"+audio_cnt).src = "/assets/<%-data.room%>/audio/"+audio_cnt+".mp3"
           document.getElementById("audio"+audio_cnt).load();
         }
         
         else if (document.getElementById("buttonid2").value === '1') {
           var pic_cnt = document.getElementById("buttonid").value;
-          document.getElementById("pic_src"+pic_cnt).src = "/assets/image/"+pic_cnt+".png"
+          document.getElementById("pic_src"+pic_cnt).src = "/assets/<%-data.room%>/image/"+pic_cnt+".png"
           //document.getElementById("audio"+audio_cnt).load();
         }
         
@@ -358,7 +358,7 @@
 //          dots[i].className = dots[i].className.replace(" active", "");
 //        }
         slides[0].style.display = "block";
-        document.getElementById("drag-img").src = "/assets/image/" + n + ".png";
+        document.getElementById("drag-img").src = "/assets/<%-data.room%>/image/" + n + ".png";
         //dots[n].className += " active";
       }
     </script>
