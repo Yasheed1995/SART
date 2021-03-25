@@ -198,12 +198,30 @@ app.post('/upload', function(req, res) {
   
   // The name of the input field (i.e. "sampleFile") is used to retrieve the uploaded file
   sampleFile = req.files.sampleFile;
-  if (req.body.type === '0')
-    uploadPath = __dirname + '/public/assets/audio/' + req.body.id + '.mp3';
-  else if (req.body.type === '1')
-    uploadPath = __dirname + '/public/assets/image/' + req.body.id + '.png';
   
+  var dir = __dirname + '/public/assets/' + req.body.room;
+  
+  if (!fs.existsSync(dir)){
+    fs.mkdirSync(dir);
+  }
+  
+  if (req.body.type === '0') {
+    dir += '/audio'
+    if (!fs.existsSync(dir)){
+      fs.mkdirSync(dir);
+    }
+    uploadPath = __dirname + '/public/assets/' + req.body.room + '/audio/' + req.body.id + '.mp3';
+  }
+    
+  else if (req.body.type === '1') {
+    dir += '/image'
+    if (!fs.existsSync(dir)){
+      fs.mkdirSync(dir);
+    }
+    uploadPath = __dirname + '/public/assets/' + req.body.room + '/image/' + req.body.id + '.png';
+  }
   console.log(uploadPath)
+  
   
   // Use the mv() method to place the file somewhere on your server
   sampleFile.mv(uploadPath, function(err) {
@@ -219,9 +237,9 @@ app.post('/removeFile', function(req, res) {
   var filenameObj = (JSON.parse(Object.keys(req.body)));
   console.log(filenameObj);
   if (filenameObj.type === 0) 
-    var fileName = __dirname +'/public/assets/audio/' + filenameObj.n + '.mp3'
+    var fileName = __dirname +'/public/assets/' + req.body.room + '/audio/' + filenameObj.n + '.mp3'
   else if (filenameObj.type === 1)
-    var fileName = __dirname +'/public/assets/image/' + filenameObj.n + '.png'
+    var fileName = __dirname +'/public/assets/' + req.body.room + '/image/' + filenameObj.n + '.png'
   
   fs.unlink(fileName,function(err){
     if(err) return console.log(err);

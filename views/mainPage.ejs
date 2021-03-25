@@ -12,11 +12,12 @@
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
 
   </head>
-  
+
   <script>
     
     $(document).ready(function(){
-      
+      var room = '<%- data.room %>';
+      console.log(room)
       var img_ele = null,
       x_cursor = 0,
       y_cursor = 0,
@@ -32,7 +33,6 @@
       document.getElementById('zoomin').addEventListener('click', function() {
         zoom(1.5);
       });
-      
       
       var audio_cnt = 0;
       var count_audio = 0;
@@ -87,7 +87,7 @@
         count_audio -= 1;
         
         axios.post('/removeFile', 
-          JSON.stringify({n: n, type: 0})
+          JSON.stringify({n: n, type: 0, room: room})
         )
         .then(function (response) {
           console.log(response.config.data);
@@ -154,7 +154,7 @@
         count_picture -= 1;
         
         axios.post('/removeFile', 
-          JSON.stringify({n: n, type: 1})
+          JSON.stringify({n: n, type: 1, room: room})
         )
         .then(function (response) {
           console.log(response.config.data);
@@ -211,8 +211,7 @@
     <div class='bgimg'>
       <div class="navbar">
         <div class="logo"><img src="/img/logo.png" width="200px"></div>
-        <div class="dot"><img src="/img/ic_dot.png" width="15px"></div>
-        
+        <div class="dot"><img src="/img/ic_dot.png" width="15px"></div>
         <div class="search-container">
           <form action="/action_page.php">
             <input type="text" placeholder="請輸入房間編號" name="search" class="searchbar">
@@ -281,6 +280,7 @@
           encType="multipart/form-data">
           <h1>Upload file!</h1>
           <input type="text" name="name">
+          <input type="hidden" name="room" display="hidden" value="<%-data.room%>">
           <input id="buttonid" type="hidden" name="id" display="hidden">
           <input id="buttonid2" type="hidden" name="type" display="hidden">
           <input type="file" name="sampleFile" />
