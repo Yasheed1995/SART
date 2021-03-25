@@ -203,6 +203,8 @@ app.post('/upload', function(req, res) {
   else if (req.body.type === '1')
     uploadPath = __dirname + '/public/assets/image/' + req.body.id + '.png';
   
+  console.log(uploadPath)
+  
   // Use the mv() method to place the file somewhere on your server
   sampleFile.mv(uploadPath, function(err) {
     if (err)
