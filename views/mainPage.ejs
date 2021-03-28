@@ -10,64 +10,117 @@
     <link rel="stylesheet" href="https://www.w3schools.com/w3css/4/w3.css">
     <link rel="shortcut icon" href="#"/>
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/8.3.1/firebase-app.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/8.3.1/firebase-storage.js"></script>
 
   </head>
+  <% var audio_array = []  %>
+  <% var picture_array = []%>
+  <% data.alldata.audio.forEach(function(item) {       %>
+  
+  <% audio_array.push(JSON.stringify(item))    %>
+  <% })%>
+  <% data.alldata.picture.forEach(function(item) {       %>
+
+  <% picture_array.push(JSON.stringify(item) )   %>
+  <% })%>
 
   <script>
-    
     $(document).ready(function(){
+      
+      var audio_arr = [<%-audio_array%>]
+      var picture_arr = [<%-picture_array%>]
+      
+      if (audio_arr.length === 0 || picture_arr.length === 0)
+        alert('please at least upload an audio file & a music file!');
+
       var room = '<%- data.room %>';
-      console.log(room)
       var img_ele = null,
       x_cursor = 0,
       y_cursor = 0,
       x_img_ele = 0,
       y_img_ele = 0;
       
-      document.getElementById('drag-img').addEventListener('mousedown', start_drag);
+      document.getElementById('drag-img') .addEventListener('mousedown', start_drag);
       document.getElementById('container').addEventListener('mousemove', while_drag);
       document.getElementById('container').addEventListener('mouseup', stop_drag);
-      document.getElementById('zoomout').addEventListener('click', function() {
-        zoom(0.5);
-      });
-      document.getElementById('zoomin').addEventListener('click', function() {
-        zoom(1.5);
-      });
+      document.getElementById('zoomout')  .addEventListener('click', function() { zoom(0.5); });
+      document.getElementById('zoomin')   .addEventListener('click', function() { zoom(1.5); });
       
       var audio_cnt = 0;
       var count_audio = 0;
       var audio_available = [0,1,2,3,4,5,6,7,8,9];
       var audio_unavailable = [];
       
-      $("#add_audio").click(function(){
-        audio_cnt = audio_available.shift();
+      $("#add_audio").click(function() {
+        add_audio(-1, -1, -1);
+        var modal = document.getElementById("myModal");
+        modal.style.display = "block";
+      });
+      
+      function add_audio(id, src_url, trackName){
+        if (id !== -1) {
+          console.log('id is not -1')
+          audio_cnt = id;
+          var index = audio_available.indexOf(parseInt(id));
+          console.log(index)
+          if (index !== -1) {
+            audio_available.splice(index, 1);
+          }
+        }
+        else {
+          audio_cnt = audio_available.shift();
+        }
+        
         audio_unavailable.push(audio_cnt);
         console.log("audio available:"+audio_available);
         console.log("audio unavailable:"+audio_unavailable);
+        
         if (count_audio >= 10) {
           alert('audio cannot exceed 10 items!! please remove your audio track.');
           return;
         }
         
         var audio_ele_str = 
-          '<li id="audio_li_'+audio_cnt+'">'+
-            '<button class="open-button" onclick="openForm('+audio_cnt+',0)">edit</button>'+
-            '<audio id="audio'+audio_cnt+'" controls> '+
-              '<source id="src'+audio_cnt+'" src="">'+
-            '</audio>'+
-            '<button id="remove_audio'+audio_cnt+'">rm</button>'+
-          '</li>';
+        '<li id="audio_li_'+audio_cnt+'">'+
+        '<div class="trackname">' +
+        '<div id="trackName'+audio_cnt+'"></div>' +
+        '</div>' +
+        '<audio id="audio'+audio_cnt+'" controls> '+
+        '<source id="src'+audio_cnt+'" src="">'+
+        '</audio>'+
+        '<button><img src="/img/ic_edit.png" width="15px" margin-right="10px" onclick="openForm('+audio_cnt+',0)"></button>' +
+        '<button><img src="/img/ic_remove.png" width="20px" margin-right="10px" id="remove_audio' + audio_cnt + '"></button>' +
+        '</li>';
         
         $("ul").append(audio_ele_str);
         
         document.getElementById("remove_audio"+audio_cnt).addEventListener("click", remove_audio_track, false);
         
-        openForm(audio_cnt, 0);
+        if (id !== -1) {
+          document.getElementById("src"+audio_cnt).src = src_url;
+          document.getElementById("audio"+audio_cnt).load();
+        }
+        else {
+          openForm(audio_cnt, 0);
+        }
+        
+        if (id !== -1) {
+          document.getElementById("trackName"+audio_cnt).innerHTML = trackName;
+        }
         
         count_audio += 1;
-      });
+        
+      }
+      
+      audio_arr.forEach(function(item) {
+        console.log(item)
+        add_audio(item.audio_cnt, item.publicUrl, item.trackName);
+      })
       
       function remove_audio_track(event) {
+        
         console.log(audio_cnt)
         console.log(event.target.id)
         var n = event.target.id.slice(-1);
@@ -86,16 +139,15 @@
         console.log('removed audio :'+n);
         count_audio -= 1;
         
-        axios.post('/removeFile', 
-          JSON.stringify({n: n, type: 0, room: room})
-        )
+        var userObj = Object();
+        userObj.audio_cnt = n;
+        userObj.type = 'audio';
+        axios.post('/RemoveFromFirebase', JSON.stringify(userObj))
         .then(function (response) {
-          console.log(response.config.data);
-          //window.location = '/Room'
+          console.log("remove audio from firebase successfully")
         })
         .catch(function (error) {
           console.log(error);
-          //window.location="/Signin"
         });
       }
       
@@ -105,37 +157,66 @@
       var pic_unavailable = [];
       
       $("#add_pic").click(function() {
-        pic_cnt = pic_available.shift();
+        add_picture(-1, -1);
+        var modal = document.getElementById("myModal");
+        modal.style.display = "block";
+      })
+      
+      function add_picture(id, src_url) {
+        if (id !== -1) {
+          console.log('id is not -1')
+          pic_cnt = id;
+          var index = pic_available.indexOf(parseInt(id));
+          console.log(index)
+          if (index !== -1) {
+            pic_available.splice(index, 1);
+          }
+        }
+        else {
+          pic_cnt = pic_available.shift();
+        }
+
         pic_unavailable.push(pic_cnt);
         console.log("pic available:"+pic_available);
         console.log("pic unavailable:"+pic_unavailable);
         
-        if (count_picture >= 10) {
-          alert('picture cannot exceed 10 items!! please remove your picture.');
+        if (count_picture >= 20) {
+          alert('picture cannot exceed 20 items!! please remove your picture.');
           return;
         }
         
         var pic_ele_str = 
-          '<div id="pic_li_' + pic_cnt + '" class="column">' + 
-            '<img id="pic_src'+ pic_cnt +'" class="demo cursor" src="" style="width:100%" onclick="currentSlide(' + pic_cnt + ')">' +
-            '<button class="open-button" onclick="openForm('+pic_cnt+',1)">edit</button>'+
-            '<button id="remove_pic' + pic_cnt + '">rm</button>' +
-          '</div>';
-          
+        '<div id="pic_li_' + pic_cnt + '" class="imgbox ">' +
+        '<img id="pic_src'+ pic_cnt +'" class="demo cursor" src="" style="width:100%" onclick="currentSlide(' + pic_cnt + ')">' +
+        '<button class=imgbox-button><img src="/img/ic_edit.png" width="20px" " onclick="openForm('+pic_cnt+',1)"></button>' +
+        '<button class="imgbox-remove imgbox-button"><img src="/img/img_remove.png" width="20px" id="remove_pic' + pic_cnt + '"></button>' +
+        '</div>';
+        
         $("#pic_list").append(pic_ele_str)
         
         document.getElementById("remove_pic"+pic_cnt).addEventListener("click", remove_picture, false);
         
-        openForm(pic_cnt, 1);
+        if (id !== -1) {
+          document.getElementById("pic_src"+pic_cnt).src = src_url;
+        }
+        else {
+          openForm(pic_cnt, 1);
+        }
         
         count_picture += 1;
+      }
+      
+      picture_arr.forEach(function(item) {
+        console.log(item)
+        add_picture(item.pic_cnt, item.publicUrl);
       })
       
       function remove_picture(event) {
         console.log(pic_cnt)
         console.log(event.target.id)
         
-        var n = event.target.id.slice(-1);
+        if (pic_cnt >= 10) { var n = event.target.id.slice(-2); }
+        else { var n = event.target.id.slice(-1); }
         
         pic_available.push(parseInt(n));
         
@@ -152,21 +233,7 @@
         $(li_to_remove).remove();
         console.log('removed pic :'+n);
         count_picture -= 1;
-        
-        axios.post('/removeFile', 
-          JSON.stringify({n: n, type: 1, room: room})
-        )
-        .then(function (response) {
-          console.log(response.config.data);
-          //window.location = '/Room'
-        })
-        .catch(function (error) {
-          console.log(error);
-          //window.location="/Signin"
-        });
       }
-
-      
       
       function zoom(zoomincrement) {
         img_ele = document.getElementById('drag-img');
@@ -192,8 +259,6 @@
         if (img_ele !== null) {
           if (x_cursor - x_img_ele > 0) 
             img_ele.style.left = '0px';
-//          else if (x_img_ele - x_cursor < img_ele.style.width)
-//            img_ele.style.left = img_ele.style.width + 'px';
           else
             img_ele.style.left = (x_cursor - x_img_ele) + 'px';
           
@@ -204,10 +269,51 @@
           console.log(img_ele.style.left+' - '+img_ele.style.top);
         }
       }
+      
+
+
     });
   </script>
   
   <body>
+    
+    <!-- The Modal -->
+    <div id="myModal" class="modal">
+      
+      <!-- Modal content -->
+      <div id="myForm" class="modal-content">
+        <button type="button" class="close" data-dismiss="modal">
+          <img src="/img/ic_close.png" width="27px" onclick="closeForm()">
+        </button>
+        <form ref='uploadForm' 
+          id='uploadForm' 
+          action='/upload-gstorage' 
+          method='post' 
+          encType="multipart/form-data">
+          <label for="fname" class="name">檔案名稱</label>
+          <input id = "trackName" type="text" name="name">
+          <input type="hidden" name="room"  value="<%-data.room%>" display="hidden">
+          <input id="buttonid" type="hidden" name="id" display="hidden">
+          <input id="buttonid2" type="hidden" name="type" display="hidden">
+          
+          <input id="buttonid3" type="file" name="file" size="20" style="display:none;" 
+            onchange="
+            this.form.upfile.value=this.value.substr(this.value.lastIndexOf('\\')+1);
+            " 
+          >
+          <input id="buttonid4" type="text" name="upfile" size="20" readonly>
+          
+          <input id="myuploadfile" type="button" value="選擇檔案" class="select" onclick="this.form.file.click();">
+<!--          <button id="myuploadfile" value="選擇檔案" class="select" onclick="this.form.file.click();">選擇檔案</button>-->
+          <!--          <input id = "myuploadfile" type="file" name="file" >-->
+          <button type='submit' value="上傳檔案" class="submit">上傳檔案</button>
+        </form>  
+
+        
+        <div class=""></div>
+      </div>
+      
+    </div>
     <div class='bgimg'>
       <div class="navbar">
         <div class="logo"><img src="/img/logo.png" width="200px"></div>
@@ -234,64 +340,39 @@
         <img src="/img/ic_notation.png" class="title" width="140px">
       </div>
       
+<!--   Start Notation   -->
+      
       <div class="Notation">
         <div class="main">
-
           <div id='container'>
-
             <div class="container">
               <div class="mySlides">
-<!--                <div class="numbertext">1 / 6</div>-->
                 <img ondragstart="return false" id="drag-img" src="" />
               </div>
-              
-<!--              <a class="prev" onclick="plusSlides(-1)">❮</a>-->
-<!--              <a class="next" onclick="plusSlides(1)">❯</a>-->
-              
             </div>
           </div>
-          
         </div>
         
         <button id="zoomout" class="zoombutton"><img src="/img/zoom_out.svg" width="25px"></button>
         <button id="zoomin" class="zoombutton"><img src="/img/zoom_in.svg" width="25px"></button>
-        <img id="add_pic" width="40px" id="btn2" src="/img/ic_addaudio.png">
         
-        <div id="pic_list" class="row">
-<!--          <div class="column">-->
-<!--            <img class="demo cursor" src="/img/music1.png" style="width:100%" onclick="currentSlide(1)">-->
-<!--          </div>-->
+        <img id="add_pic" width="40px" id="btn2" left="0px" src="/img/ic_addaudio.png">
+        <div id="pic_list" class="imgscroll">
         </div>
-          
-      </div>
+      </div> 
+<!--   end Notation   -->
       
       <div class="Player">
-        <button><img src="/img/ic_vol.png" class="player-btn1" width="44px"></button>
-        <button><img src="/img/ic_stop.png" class="player-btn2" width="38px"></button>
-        <button><img src="/img/ic_play.png" class="player-btn3" width="160px"></button>
+        <button><img src="/img/ic_vol.png"  class="player-btn1" width="44px"></button>
+        <button><img src="/img/ic_stop.png" class="player-btn2" width="38px" onclick = "stopAll()"></button>
+        <button><img src="/img/ic_play.png" class="player-btn3" width="160px" onclick="playAll();"></button>
       </div>
       <div class="player2">
         
-      <div class="form-popup" id="myForm" class="form-container">
-        <form ref='uploadForm' 
-          id='uploadForm' 
-          action='/upload' 
-          method='post' 
-          encType="multipart/form-data">
-          <h1>Upload file!</h1>
-          <input type="text" name="name">
-          <input type="hidden" name="room" display="hidden" value="<%-data.room%>">
-          <input id="buttonid" type="hidden" name="id" display="hidden">
-          <input id="buttonid2" type="hidden" name="type" display="hidden">
-          <input type="file" name="sampleFile" />
-<!--          <input type='submit' value='Upload!' />-->
-          <button type='submit' value=Upload!>Upload!</button>
-          <button type="button" class="btn cancel" onclick="closeForm()">Close</button>
-        </form>  
-      </div>
 
       </div>
-      <div class="Metronome">Metronome</div>
+      <div class="Metronome">
+      </div>
       
       <img src="/img/ic_video.png" class="video" width="54px">
       <div class="Videocall">
@@ -306,9 +387,7 @@
       
       </div>
     </div>
-    <script src="https://www.gstatic.com/firebasejs/8.3.1/firebase-app.js"></script>
-    <script src="https://www.gstatic.com/firebasejs/8.3.1/firebase-storage.js"></script>
-    <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
+
     <script>
       function openForm(myid, mytype) {
         document.getElementById("buttonid").value=myid;
@@ -317,22 +396,47 @@
       }
       
       function closeForm() {
+        //document.getElementById("trackName0").value = document.getElementById("trackName").value;
         if (document.getElementById("buttonid2").value === '0') {
           var audio_cnt = document.getElementById("buttonid").value;
-          document.getElementById("src"+audio_cnt).src = "/assets/<%-data.room%>/audio/"+audio_cnt+".mp3"
-          document.getElementById("audio"+audio_cnt).load();
+          var userObj = Object();
+          userObj.audio_cnt = audio_cnt;
+          userObj.type = 'audio'
+          userObj.trackName = document.getElementById("trackName").value;
+          axios.post('/getUrl', JSON.stringify(userObj))
+          .then(function (response) {
+            console.log(response.data.publicUrl);
+            document.getElementById("trackName"+audio_cnt).innerHTML = response.data.trackName;
+            document.getElementById("src"+audio_cnt).src = response.data.publicUrl;
+            document.getElementById("audio"+audio_cnt).load();
+          })
+          .catch(function (error) {
+            //window.location = '/Signin'
+            console.log(error);
+          });
+          //document.getElementById("src"+audio_cnt).src = "/assets/<%-data.room%>/audio/"+audio_cnt+".mp3"
         }
         
         else if (document.getElementById("buttonid2").value === '1') {
           var pic_cnt = document.getElementById("buttonid").value;
-          document.getElementById("pic_src"+pic_cnt).src = "/assets/<%-data.room%>/image/"+pic_cnt+".png"
-          //document.getElementById("audio"+audio_cnt).load();
+          var userObj = Object();
+          userObj.pic_cnt = pic_cnt;
+          userObj.type = 'picture';
+          axios.post('/getUrl', JSON.stringify(userObj))
+          .then(function (response) {
+            console.log(response.data.publicUrl);
+            document.getElementById("pic_src"+pic_cnt).src = response.data.publicUrl;
+          })
+          .catch(function (error) {
+            console.log(error);
+          });
         }
         
         document.getElementById("myForm").style.display = "none";
+        document.getElementById("trackName").value = "";
+        document.getElementById("buttonid4").value = "";
+
         //console.log('added audio :'+audio_cnt);
-                
-        
       }
     </script>
     <script>
@@ -358,8 +462,64 @@
 //          dots[i].className = dots[i].className.replace(" active", "");
 //        }
         slides[0].style.display = "block";
-        document.getElementById("drag-img").src = "/assets/<%-data.room%>/image/" + n + ".png";
-        //dots[n].className += " active";
+        
+        var userObj = Object();
+        userObj.pic_cnt = n;
+        userObj.type = 'picture'
+        axios.post('/getUrlFromFirebase', JSON.stringify(userObj))
+        .then(function (response) {
+          console.log(response.data.publicUrl);
+          document.getElementById("drag-img").src = response.data.publicUrl;
+        })
+        .catch(function (error) {
+          console.log(error);
+        });
+      }
+    </script>
+    
+    <script>
+      // Get the modal
+      var modal = document.getElementById("myModal");
+      
+      // Get the button that opens the modal
+//      var btn = document.getElementById("myBtn");
+      
+      // Get the <span> element that closes the modal
+      var span = document.getElementsByClassName("close")[0];
+      
+      // When the user clicks the button, open the modal 
+//      btn.onclick = function() {
+//        modal.style.display = "block";
+//      }
+      
+      // When the user clicks on <span> (x), close the modal
+      span.onclick = function() {
+        modal.style.display = "none";
+      }
+      
+      // When the user clicks anywhere outside of the modal, close it
+      window.onclick = function(event) {
+        if (event.target == modal) {
+          modal.style.display = "none";
+        }
+      }
+    </script>
+    <script>
+      var audio_arr = [<%-audio_array%>];
+      function playAll() {
+        audio_arr.forEach(function(item) {
+          var x = document.getElementById("audio"+item.audio_cnt); 
+          x.play();
+          //add_audio(item.audio_cnt, item.publicUrl, item.trackName);
+        })
+      }
+      function stopAll() {
+        audio_arr.forEach(function(item) {
+          var x = document.getElementById("audio"+item.audio_cnt); 
+          x.pause();
+          x.currentTime = 0
+          //add_audio(item.audio_cnt, item.publicUrl, item.trackName);
+        })
       }
     </script>
   </body>

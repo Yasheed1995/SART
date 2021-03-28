@@ -34,14 +34,12 @@ body, html {height: 100%}
     
 </div>
   
-<!--  <% console.log(userdata)       %>-->
   <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
   <script>
     function createRoom() {
-      var myUser = <%-JSON.stringify(userdata)%>;
-      console.log(myUser)
+
       axios.post('/createRoom', 
-        JSON.stringify(myUser)
+        //JSON.stringify(myUser)
       )
       .then(function (response) {
         console.log(response.data);

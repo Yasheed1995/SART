@@ -1,0 +1,508 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<meta charset="UTF-8">
+		<title></title>
+		<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+		<style>
+			body{
+				font-family: 'Montserrat', sans-serif;
+				background-color: #999;
+				-webkit-background-size: 4px 4px;
+				-moz-background-size: 4px 4px;
+				background-size: 4px 4px;
+			}
+			
+			/* BG */
+			#audioplayer.size-med{
+				width: 660px;
+				height: 20px;
+				position: relative;
+				margin: 20px;
+				border-radius: 7px;
+				background: #C9D1D3;
+				padding: 10px 15px;
+				float: left;
+			}
+			
+			/*Stop button*/
+			.size-med #songStop{
+				background: #2D6587;
+				width: 12px;
+				height: 12px;
+				cursor: pointer;
+				float: left;
+				border-radius: 1px;
+				margin: 2px 20px 0;
+			}
+			/*Play/Pause button*/
+			.size-med #songPlayPause{
+				color: rgb(45,101,135);
+				font-size: 16px;
+				font-weight: bold;
+				cursor: pointer;
+				float: left;
+				width: 16px;
+				text-align: center;
+			}
+			
+			.size-med #songPlayPause.playing{
+				font-weight: bold;
+				height: 14px;
+				overflow: hidden;
+			}
+			
+			/*Song location slider*/
+			.size-med #songSlider{
+				width: 550px;
+				height: 12px;
+				float: left;
+				border-radius: 3px;
+				overflow: hidden;
+				margin-top: 3px;
+				background: #E2E7E9;
+				position: relative;
+				font-family: Arial, Helvetica, sans-serif;
+			}
+			/*Track progress bar*/
+			.size-med #trackProgress{
+				width: 0;
+				height: 12px;
+				overflow: hidden;
+				position: relative;
+				background: #638BA4;
+			}
+			
+			.size-med #songTimeA{
+				position: absolute;
+				left: 3px;
+				font-size: 10px;
+				color: #666;
+				pointer-events: none;
+				cursor: default;
+			}
+			
+			.size-med #songTimeB{
+				position: absolute;
+				right: 3px;
+				font-size: 10px;
+				color: #666;
+				pointer-events: none;
+				cursor: default;
+			}
+			
+			.size-med #songTimeC{
+				position: absolute;
+				left: 3px;
+				font-size: 10px;
+				color: #121212;
+				pointer-events: none;
+				cursor: default;
+			}
+			
+			.size-med #songTimeD{
+				position: absolute;
+				text-align: right;
+				left: 226px;
+				width: 40px;
+				font-size: 10px;
+				color: #111;
+				pointer-events: none;
+				cursor: default;
+			}
+			
+			#volume-container{
+				position: absolute;
+				width: 70px;
+				height: 30px;
+				margin-top: -10px;
+				padding-top: 10px;
+				right: -17px;
+			}
+			
+			/*Volume Up Button*/
+			.size-med #volumeUp{
+				position: absolute;
+				top: 0;
+				right: 20;
+				color: #2D6587;
+				cursor: default;
+				opacity: 0;
+				transition: opacity .25s linear;
+				-moz-transition: opacity .25s linear;
+				-webkit-transition: opacity .25s linear;
+			}
+			/*Volume Down Button*/
+			.size-med #volumeDown{
+				position: absolute;
+				bottom: 0;
+				right: 20;
+				color: #2D6587;
+				cursor: default;
+				opacity: 0;
+				transition: opacity .25s linear;
+				-moz-transition: opacity .25s linear;
+				-webkit-transition: opacity .25s linear;
+			}
+			/*Volume Meter*/
+			.size-med #volumeMeter{
+				width: 8px;
+				height: 40px;
+				position: absolute;
+				right: 0px;
+				top: -2px;
+				opacity: 0;
+				transition: opacity .25s linear;
+				-moz-transition: opacity .25s linear;
+				-webkit-transition: opacity .25s linear;
+				background: #292929;
+				overflow: hidden;
+				
+				border-radius: 2px;
+				-webkit-transform: rotate(180deg);
+				-moz-transform: rotate(180deg);
+				transform: rotate(180deg);
+			}
+			
+			/*Volume Location Meter*/
+			.size-med #volumeStatus{
+				width: 8px;
+				height: 40px;
+				background: #2D6587;
+			}
+			
+			#volume-container:hover #volumeMeter{
+				opacity: 1;
+			}
+			
+			
+			#volume{
+				float: left;
+				margin-left: 15px;
+				cursor: pointer;
+				font-family: Arial, Helvetica, sans-serif;
+			}
+			
+			#volume-icon{
+				width: 6px;
+				height: 6px;
+				border-radius: 1px 0 0 1px;
+				background: #2D6587;
+				color: #2D6587;
+				font-size: 8px;
+				position: relative;
+				display: inline-block;
+				*display: inline;
+				zoom: 1.0;
+				margin: 6px 6px 6px 0;
+			}
+			
+			#volume-icon:after{
+				content:'';
+				display: block;
+				position: absolute;
+				top: -5px;
+				left: -6px;
+				width: 0;
+				height: 0;
+				border: 8px solid transparent;
+				border-right: 8px solid #2D6587;
+			}
+			
+			#volume-container:hover:before{
+				content: '';
+				width: 0;
+				height: 0;
+				position: absolute;
+				right: 6px;
+				top: 14px;
+				border: 6px solid transparent;
+				border-left: 6px solid #2D6587;
+			}
+			
+			#volume-container:hover #volumeUp, #volume-container:hover #volumeDown{
+				opacity: 1;
+			}
+			
+			
+			#volume span{
+				font-size: 16px;
+				width: 3px;
+				margin-top: -10px;
+				text-align: center;
+				color: #2D6587;
+				display: inline-block;
+				*display: inline;
+				zoom: 1.0;
+				vertical-align: middle;
+			}
+			
+			#volume span:nth-child(3){
+				font-size: 12px;
+			}
+			
+			#volume span:nth-child(2){
+				font-size: 9px;
+			}
+			
+			#volume.muted span{
+				display: none;	
+			}
+			
+			/* TRACKLIST */
+			
+			#tracklist{
+				width: 80px;
+				height: 30px;
+				font-size: 14px;
+				border-radius: 6px;
+				background: #F4D6A2;
+				float: left;
+				overflow: hidden;
+				white-space:nowrap;
+				text-overflow: ellipsis;
+			}
+			
+			#tracklist ul{
+				color: #0D3354;
+				list-style: none;
+				padding:0;
+				text-align:center;
+			}
+			
+			#tracklist ul li{
+				cursor: pointer;
+			}
+			
+			#tracklist ul li:hover{
+				opacity: .7;
+			}
+		</style>
+	</head>
+	<body>
+		<div id="tracklist">
+			<ul>
+				<!--<li onclick="changeSong('song')" class="playing" albumart="chaoz-fantasy.png" audiolink="http://audio.ngfiles.com/85000/85046_newgrounds_parago.mp3">Paragon X9 &mdash; <span>Chaoz Fantasy</span> <em>(Playing)</em></li>-->
+				<li onclick="changeSong('song')" class="playing" albumart="chaoz-impact.png" audiolink="http://audio.ngfiles.com/152000/152047_ParagonX9___Chaoz_Impact.mp3">鋼琴111112232222</li>
+			</ul>
+		</div>
+		<audio id="song" ontimeupdate="updateTime()">
+			<source src="http://audio.ngfiles.com/152000/152047_ParagonX9___Chaoz_Impact.mp3" type="audio/mp3"/>
+			Your browser does not support the audio tag.
+		</audio>
+		<div id="audioplayer" class="size-med">
+			
+			<div id="songPlayPause" onclick="playPause('song')">&#x25b6;</div>
+			
+			<div id="songStop" onclick="stopSong()"></div>
+			
+			<div id="songSlider" onclick="setSongPosition(this,event)"><div id="songTimeA">0:00</div><div id="songTimeB">2:14</div><div id="trackProgress"><div id="songTimeC">0:00</div><div id="songTimeD">&hellip;</div></div></div>
+			
+			<div id="volume-container">
+				<div id="volume" onclick="muteAudio()"><div id="volume-icon"></div><span>)</span><span>)</span><span>)</span></div>
+				
+				<div id="volumeUp" onclick="changeVolume(10, 'up')">+</div><br>
+				<div id="volumeDown" onclick="changeVolume(10, 'down')">-</div>
+				
+				<div id="volumeMeter" onclick="setNewVolume(this,event)"><div id="volumeStatus"></div></div>
+			</div>
+		</div>
+		<script>
+			var activeSong;
+			//Plays the song. Just pass the id of the audio element.
+			function play(id){
+				//Sets the active song to the song being played.  All other functions depend on this.
+				activeSong = document.getElementById(id);
+				//Plays the song defined in the audio tag.
+				activeSong.play();
+				
+				//Calculates the starting percentage of the song.
+				var percentageOfVolume = activeSong.volume / 1;
+				var percentageOfVolumeMeter = document.getElementById('volumeMeter').offsetHeight * percentageOfVolume;
+				
+				//Fills out the volume status bar.
+				document.getElementById('volumeStatus').style.height = Math.round(percentageOfVolumeSlider) + "px";
+			}
+			//Pauses the active song.
+			function pause(){
+				activeSong.pause();
+			}
+			//Does a switch of the play/pause with one button.
+			function playPause(id){
+				//Sets the active song since one of the functions could be play.
+				activeSong = document.getElementById(id);
+				//Checks to see if the song is paused, if it is, play it from where it left off otherwise pause it.
+				if (activeSong.paused){
+					activeSong.play();
+					document.getElementById("songPlayPause").innerHTML = "||";
+					document.getElementById("songPlayPause").setAttribute("class", "playing");
+				}else{
+					activeSong.pause();
+					document.getElementById("songPlayPause").innerHTML = "&#x25b6;";
+					document.getElementById("songPlayPause").setAttribute("class", "");
+				}
+			}
+			
+			//Updates the current time function so it reflects where the user is in the song.
+			//This function is called whenever the time is updated.  This keeps the visual in sync with the actual time.
+			function updateTime(){
+				var currentSeconds = (Math.floor(activeSong.currentTime % 60) < 10 ? '0' : '') + Math.floor(activeSong.currentTime % 60);
+				var currentMinutes = Math.floor(activeSong.currentTime / 60);
+				//Sets the current song location compared to the song duration.
+				document.getElementById("songTimeA").innerHTML = currentMinutes + ":" + currentSeconds;
+				document.getElementById("songTimeB").innerHTML = Math.floor(activeSong.duration / 60) + ":" + (Math.floor(activeSong.duration % 60) < 10 ? '0' : '') + Math.floor(activeSong.duration % 60);
+				document.getElementById("songTimeC").innerHTML = currentMinutes + ":" + currentSeconds;
+				document.getElementById("songTimeD").innerHTML = Math.floor(activeSong.duration / 60) + ":" + (Math.floor(activeSong.duration % 60) < 10 ? '0' : '') + Math.floor(activeSong.duration % 60);
+				
+				//Fills out the slider with the appropriate position.
+				var percentageOfSong = (activeSong.currentTime/activeSong.duration);
+				var percentageOfSlider = document.getElementById('songSlider').offsetWidth * percentageOfSong;
+				
+				//Updates the track progress div.
+				document.getElementById('trackProgress').style.width = Math.round(percentageOfSlider) + "px";
+				
+				if(document.getElementById("songTimeA").innerHTML == document.getElementById("songTimeB").innerHTML){
+					document.getElementById("songPlayPause").innerHTML = "&#x25b6;";
+					document.getElementById("songPlayPause").setAttribute("class", "");
+				};
+			}
+			function volumeUpdate(number){
+				//Updates the volume of the track to a certain number.
+				activeSong.volume = number / 100;
+			}
+			//Changes the volume up or down a specific number
+			function changeVolume(number, direction){
+				//Checks to see if the volume is at zero, if so it doesn't go any further.
+				if(activeSong.volume >= 0 && direction == "down"){
+					activeSong.volume = activeSong.volume - (number / 100);
+				}
+				//Checks to see if the volume is at one, if so it doesn't go any higher.
+				if(activeSong.volume <= 1 && direction == "up"){
+					activeSong.volume = activeSong.volume + (number / 100);
+				}
+				
+				if(activeSong.volume > .6){
+					document.getElementById('volume').innerHTML = '<div id="volume-icon"></div><span>)</span><span>)</span><span>)</span>';
+					document.getElementById("volume").setAttribute("class", "");
+				}else if(activeSong.volume > 0 && activeSong.volume <= .3){
+					document.getElementById('volume').innerHTML = '<div id="volume-icon"></div><span>)</span>';
+					document.getElementById("volume").setAttribute("class", "");
+				}else if(activeSong.volume == 0){
+					document.getElementById("volume").setAttribute("class", "muted");
+				}else{
+					document.getElementById('volume').innerHTML = '<div id="volume-icon"></div><span>)</span><span>)</span>';
+					document.getElementById("volume").setAttribute("class", "");
+				}
+				
+				//Finds the percentage of the volume and sets the volume meter accordingly.
+				var percentageOfVolume = activeSong.volume / 1;
+				var percentageOfVolumeSlider = document.getElementById('volumeMeter').offsetHeight * percentageOfVolume;
+				
+				document.getElementById('volumeStatus').style.height = Math.round(percentageOfVolumeSlider) + "px";
+			}
+			//Sets the location of the song based off of the percentage of the slider clicked.
+			function setLocation(percentage){
+				activeSong.currentTime = activeSong.duration * percentage;
+			}
+			/*
+			Gets the percentage of the click on the slider to set the song position accordingly.
+			Source for Object event and offset: https://website-engineering.blogspot.com/2011/04/get-x-y-coordinates-relative-to-div-on.html
+			*/
+			function setSongPosition(obj,e){
+				//Gets the offset from the left so it gets the exact location.
+				var songSliderWidth = obj.offsetWidth;
+				var evtobj=window.event? event : e;
+				clickLocation =  evtobj.layerX;
+				
+				var percentage = (clickLocation/songSliderWidth);
+				//Sets the song location with the percentage.
+				setLocation(percentage);
+			}
+			
+			//Set's volume as a percentage of total volume based off of user click.
+			function setVolume(percentage){
+				activeSong.volume =  percentage;
+				
+				if(percentage > .6){
+					document.getElementById('volume').innerHTML = '<div id="volume-icon"></div><span>)</span><span>)</span><span>)</span>';
+					document.getElementById("volume").setAttribute("class", "");
+				}else if(percentage > 0 && percentage <= .3){
+					document.getElementById('volume').innerHTML = '<div id="volume-icon"></div><span>)</span>';
+					document.getElementById("volume").setAttribute("class", "");
+				}else if(percentage == 0){
+					document.getElementById("volume").setAttribute("class", "muted");
+				}else{
+					document.getElementById('volume').innerHTML = '<div id="volume-icon"></div><span>)</span><span>)</span>';
+					document.getElementById("volume").setAttribute("class", "");
+				}
+				
+				var percentageOfVolume = activeSong.volume / 1;
+				var percentageOfVolumeSlider = document.getElementById('volumeMeter').offsetHeight * percentageOfVolume;
+				
+				document.getElementById('volumeStatus').style.height = Math.round(percentageOfVolumeSlider) + "px";
+			}
+			
+			//Set's new volume id based off of the click on the volume bar.
+			function setNewVolume(obj,e){
+				var volumeSliderHeight = obj.offsetHeight;
+				var evtobj = window.event? event: e;
+				clickLocation = obj.offsetHeight - evtobj.layerY;
+				
+				var percentage = (clickLocation/volumeSliderHeight);
+				setVolume(percentage);
+			}
+			//Stop song by setting the current time to 0 and pausing the song.
+			function stopSong(){
+				activeSong.currentTime = 0;
+				activeSong.pause();
+				document.getElementById("songPlayPause").innerHTML = "&#x25b6;";
+				document.getElementById("songPlayPause").setAttribute("class", "");
+			}
+			
+			//Change Song
+			function changeSong(id){
+				stopSong();
+				
+				//Sets the active song since one of the functions could be play.
+				activeSong = document.getElementById(id);
+				
+				activeSong.play();
+			}
+			
+			//mute
+			function muteAudio(){
+				var ismuted = document.getElementById("volume").getAttribute("class") == "muted" ? true : false;
+				var curVol = document.getElementById("volume").getAttribute("muteVol");
+				
+				if(ismuted == true){
+					setVolume(curVol);
+					document.getElementById("volume").setAttribute("class", "");
+				}else{
+					var prevVol = document.getElementById('volumeStatus').offsetHeight / document.getElementById('volumeMeter').offsetHeight;
+					setVolume(0);
+					document.getElementById("volume").setAttribute("class", "muted");
+					document.getElementById("volume").setAttribute("muteVol", prevVol);
+				}
+			}
+			
+			$(function(){
+				
+				//Draggable player
+				$('#audioplayer').draggable();
+				
+				//Changing Song
+				$('#tracklist li').click(function(){
+					$('#tracklist li#playing em').remove();
+					$('#tracklist li#playing').attr("id", "");
+					
+					var audioLink = $(this).attr("audioLink");
+					
+					$(this).attr("id", "playing").append(" <em>(Playing)</em>");
+					$("audio").remove();
+					$("#tracklist").after('<audio id="song" ontimeupdate="updateTime()"><source src="'+audioLink+'" type="audio/mp3"/>Your browser does not support the audio tag.</audio>');
+				});
+				
+			});
+		</script>
+	</body>
+</html>

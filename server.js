@@ -11,31 +11,53 @@ const fileUpload = require('express-fileupload');
 
 const app = express();
 //const app = require("https-localhost")()
-const port = process.env.PORT || 34000;
+
 const server = http.createServer(app);
-const db = require('./modules/db');
-const requestLogger = require('./middlewares/requestLogger');
+//const db = require('./modules/db');
+//const requestLogger = require('./middlewares/requestLogger');
+
+const process = require('process'); // Required to mock environment variables
+const port = process.env.PORT || 34000;
+const {format} = require('util');
+const Multer = require('multer');
+
+const {Storage} = require('@google-cloud/storage');
+const storage = new Storage();
 
 // view engine setup
 app.set('views', path.join(__dirname, 'views'));
 app.set('view engine', 'ejs');
 app.use(express.static(path.join(__dirname, 'public')));
 app.use(bodyParser.urlencoded({extended:false}));
+app.use(bodyParser.json());
 app.locals.moment = require('moment');
 
 app.use(fileUpload());
 
-db.connect();
+//db.connect();
 server.listen(port);
 
+// Multer is required to process file uploads and make them available via
+// req.files.
+const multer = Multer({
+  storage: Multer.memoryStorage(),
+  limits: {
+    fileSize: 20 * 1024 * 1024, // no larger than 5mb, you can change as needed.
+  },
+});
+
+var RoomNum = "";
+var resource_url = "";
+
+var bucket = storage.bucket('sart-bucket-1');
+
 var admin = require('firebase-admin')
-//var serviceAccount = require('./test-nodejs-400b8-firebase-adminsdk-sjan6-daa9ef4537.json')
-var serviceAccount = require('./core-incentive-306610-firebase-adminsdk-v3b83-e9f9a2be0c')
+var serviceAccount = require('./mystical-ace-308906-firebase-adminsdk-xwo47-ba36a7571f')
 
 // connect to Firebase
 admin.initializeApp({
   credential: admin.credential.cert(serviceAccount),
-  databaseURL: "https://core-incentive-306610-default-rtdb.firebaseio.com/"
+  databaseURL: "https://mystical-ace-308906-default-rtdb.firebaseio.com/"
 })
 var database = admin.database()
 
@@ -79,9 +101,9 @@ var mainFunc = function(roomNUM) {
     var ref = database.ref('Room/'+roomNUM)
     ref.once('value').then((snapshot) => {
       var data = snapshot.val()
-      var keys = (Object.keys(snapshot.val()))
-      debug('user is: '+data.userid)
-      resolve(data.userid)
+      console.log(data);
+      
+      resolve(data)
     })
   })
 }
@@ -90,17 +112,26 @@ router.get('/mainPage/:room', (req, res) => {
       // retrieve data of the room from firebase
       var roomID = req.params.room;
       mainFunc(roomID).then((val) => {
-        var user = val;
+        //var user = val;
         var d = Object();
         d.room = roomID;
-        d.user = user;
+        if (val === null) {
+          d.alldata = Object();
+          d.alldata.audio = []
+          d.alldata.picture = []
+        }
+        else {
+          d.alldata = val;
+        }
+        
+        RoomNum = roomID;
+        console.log('alldata: ', d.alldata);
         
         res.format({
           html: function() {
-            res.render('mainPage', {data: d})
+            res.render('mainPage', {data: d});
           }
         })
-
       });
 })
 app.post('/loginWithGoogle', (req, res) => {
@@ -135,13 +166,14 @@ app.post('/loginWithGoogle', (req, res) => {
 })
 
 app.post('/login', (req, res) => {
-  
   var userObj = Object()
   userObj.account = req.body.account
   userObj.password = req.body.password
   userObj.hasRoom = false;
   userObj.music = 0
   userObj.picture = 0;
+  console.log(req.body)
+  console.log(userObj)
       
   var contentRef = database.ref('User/'+userObj.account)
   contentRef.set(userObj).then(() => {
@@ -171,22 +203,11 @@ function getRandomString(length) {
   return result;
 }
 app.post('/createRoom', (req, res) => {
-  console.log(req.body)
-  if (req.body !== undefined) {
-    var userObj = (JSON.parse(Object.keys(req.body)));
-    userObj.hasRoom = true;
-    var newObj = Object();
-    newObj.userid = userObj.account;
     var roomNum = getRandomString(6);
-    var contentRef = database.ref('Room/'+roomNum)
-    contentRef.set(newObj)
-    database.ref('User/'+userObj.account).set(userObj)
     res.send({room:roomNum})
-
-  }
 })
 
-app.post('/upload', function(req, res) {
+app.post('/upload', function(req, res, next) {
   let sampleFile;
   let uploadPath;
   
@@ -232,6 +253,7 @@ app.post('/upload', function(req, res) {
   });
 });
 
+
 app.post('/removeFile', function(req, res) {
   console.log(req.body);
   var filenameObj = (JSON.parse(Object.keys(req.body)));
@@ -248,6 +270,125 @@ app.post('/removeFile', function(req, res) {
   
   res.status(204).send();
 })
+
+app.post('/upload-gstorage', multer.single('file'), (req, res, next) => {
+  
+  if (!req.files.file) {
+    res.status(400).send('No file uploaded.');
+    return;
+  }
+  
+  // Create a new blob in the bucket and upload the file data.
+  var bucket = storage.bucket('sart-bucket-1');
+  var filename = req.files.file.name;
+  filename = filename.replace(/\s/g, '');
+  const blob = bucket.file(filename);
+  const blobStream = blob.createWriteStream();
+  
+  blobStream.on('error', err => {
+    next(err);
+  });
+  
+  blobStream.on('finish', () => {
+    // The public URL can be used to directly access the file via HTTP.
+    const publicUrl = format(
+      `https://storage.googleapis.com/${bucket.name}/${blob.name}`
+    );
+//    console.log(RoomNum)
+    resource_url = publicUrl;
+    var response_data = 
+    {
+      room: RoomNum,
+      publicUrl: publicUrl
+    }
+    //res.status(200).send(response_data);
+    
+    res.status(204).send();
+    //res.status(204).send();
+  });
+  
+  blobStream.end(req.files.file.data);
+
+});
+
+app.post('/getUrl', (req, res) => {
+    //console.log("/get Url return %s:" + resource_url);
+    console.log(req.body)
+    var filenameObj = (JSON.parse(Object.keys(req.body)));
+    console.log(filenameObj);
+    res.send({publicUrl:resource_url, trackName: filenameObj.trackName})
+    var userObj = Object();
+    
+    if (filenameObj.type === 'audio'){
+      var contentRef = database.ref('Room/'+RoomNum+'/audio/'+filenameObj.audio_cnt);
+      userObj.trackName = filenameObj.trackName;
+      userObj.publicUrl = resource_url;
+      userObj.audio_cnt = filenameObj.audio_cnt;
+    }
+  
+    else if (filenameObj.type === 'picture') {
+      var contentRef = database.ref('Room/'+RoomNum+'/picture/'+filenameObj.pic_cnt);
+      userObj.publicUrl = resource_url;
+      userObj.pic_cnt = filenameObj.pic_cnt;
+    }
+  
+    contentRef.set(userObj);
+})
+
+//var fireFunc = function(firebaseUrl) {
+//  return new Promise((resolve, reject) => {
+//    var ref = database.ref(firebaseUrl)
+//    ref.once('value').then((snapshot) => {
+//      var data = snapshot.val()
+//      console.log(data);
+//      
+//      resolve(data)
+//    })
+//  })
+//}
+
+
+app.post('/getUrlFromFirebase', (req, res) => {
+  //console.log("/get Url return %s:" + resource_url);
+  console.log(req.body)
+  var filenameObj = (JSON.parse(Object.keys(req.body)));
+  console.log(filenameObj);
+  //res.send({publicUrl:resource_url})
+  var userObj = Object();
+  
+  if (filenameObj.type === 'audio'){
+    var contentRef = database.ref('Room/'+RoomNum+'/audio/'+filenameObj.audio_cnt);
+  }
+  else if (filenameObj.type === 'picture') {
+    var contentRef = database.ref('Room/'+RoomNum+'/picture/'+filenameObj.pic_cnt);
+  }
+  
+  contentRef.once('value').then((snapshot) => {
+    var data = snapshot.val();
+    console.log(data)
+    res.send({publicUrl:data.publicUrl})
+  })
+  
+})
+
+
+app.post('/RemoveFromFirebase', (req, res) => {
+  //console.log("/get Url return %s:" + resource_url);
+  console.log(req.body)
+  var filenameObj = (JSON.parse(Object.keys(req.body)));
+  console.log(filenameObj);
+  res.send({publicUrl:resource_url})
+  var userObj = Object();
+  
+  if (filenameObj.type === 'audio'){
+    var contentRef = database.ref('Room/'+RoomNum+'/audio/'+filenameObj.audio_cnt);
+  }
+  else if (filenameObj.type === 'picture') {
+    var contentRef = database.ref('Room/'+RoomNum+'/picture/'+filenameObj.pic_cnt);
+  }
+  contentRef.remove();
+})
+
 
 app.use('/', router)
 

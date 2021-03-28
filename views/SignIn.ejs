@@ -18,7 +18,6 @@ body, html {height: 100%}
 <body>
   
 
-
 <div class="bgimg">
   <div class="w3-container">
     <div class="w3-display-middle">
@@ -41,7 +40,7 @@ body, html {height: 100%}
             
             <div class="g-signin2" data-width="200px" data-onsuccess="onSignIn" data-auto-logout-link="true" style="display:inline-block">
             </div>
-            <div onmousedown="signOut()">Logout</div>
+<!--            <div onmousedown="signOut()">Logout</div>-->
 <!--            -->
 <!--            <div class="fb-login-button" data-width="200px" data-size="large" data-button-type="login_with" data-layout="default" data-auto-logout-link="true" data-use-continue-as="false"style="display:inline-block">-->
 <!--            </div>-->
@@ -86,6 +85,8 @@ function onSignIn(googleUser) {
   myUserEntity.Name = profile.getName();
   myUserEntity.email = profile.getEmail();
   
+  
+  
   //Store the entity object in sessionStorage where it will be accessible from all pages of your site.
   //sessionStorage.setItem('myUserEntity',JSON.stringify(myUserEntity));
 
@@ -94,7 +95,7 @@ function onSignIn(googleUser) {
   )
   .then(function (response) {
     console.log(response.config.data);
-    //window.location = '/Room'
+    window.location = '/Room'
 
   })
   .catch(function (error) {
