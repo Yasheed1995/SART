@@ -20,9 +20,11 @@ const process = require('process'); // Required to mock environment variables
 const port = process.env.PORT || 34000;
 const {format} = require('util');
 const Multer = require('multer');
-
+const projectId = 'mystical-ace-308906'
+const keyFilename = './sart-bucket-1-serviceaccount.json'
 const {Storage} = require('@google-cloud/storage');
-const storage = new Storage();
+
+const storage = new Storage({projectId, keyFilename});
 
 // view engine setup
 app.set('views', path.join(__dirname, 'views'));
