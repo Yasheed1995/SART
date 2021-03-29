@@ -195,6 +195,7 @@ app.post('/login', (req, res) => {
   console.log(userObj)
       
   var contentRef = database.ref('User/'+userObj.account)
+  if (userObj.account === "") return;
   contentRef.set(userObj).then(() => {
     if (userObj.account === '') {
       console.log("not logged in!");

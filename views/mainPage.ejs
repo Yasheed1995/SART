@@ -330,8 +330,8 @@
         <div class="logo"><a href='/'><img src="/img/logo.png" width="200px"></a></div>
         <div class="dot"><img src="/img/ic_dot.png" width="15px"></div>
         <div class="search-container">
-          <form action="/action_page.php">
-            <input type="text" placeholder="請輸入房間編號" name="search" class="searchbar">
+          <form onsubmit="redirect();return false;">
+            <input id="userInput"type="text" placeholder="請輸入房間編號" name="search" class="searchbar">
             <button type="submit">GO</button>
             <button class="user"><img src="/img/ic_user.png" width="22px"></button>
           </form> <!-- end form-->
@@ -403,7 +403,7 @@
       function openForm(myid, mytype) {
         document.getElementById("buttonid").value=myid;
         document.getElementById("buttonid2").value=mytype;
-        document.getElementById("myForm").style.display = "block";
+        document.getElementById("myModal").style.display = "block";
       }
       
       function closeForm() {
@@ -547,6 +547,14 @@
         })
       }
     </script>
+
+    <script type='text/javascript'>
+            function redirect() {
+                var input = document.getElementById('userInput').value;
+                if (input === "") {alert("please enter a string!"); return;}
+                window.location = '/mainPage/'+input;
+            }
+            </script>
   </body>
 
 </html>
