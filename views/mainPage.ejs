@@ -13,6 +13,7 @@
     <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
     <script src="https://www.gstatic.com/firebasejs/8.3.1/firebase-app.js"></script>
     <script src="https://www.gstatic.com/firebasejs/8.3.1/firebase-storage.js"></script>
+    <script src="https://kit.fontawesome.com/0e6a491530.js" crossorigin="anonymous"></script>
 
   </head>
   <% var audio_array = []  %>
@@ -91,8 +92,8 @@
         '<audio id="audio'+audio_cnt+'" controls> '+
         '<source id="src'+audio_cnt+'" src="">'+
         '</audio>'+
-        '<button><img src="/img/ic_edit.png" width="15px" margin-right="10px" onclick="openForm('+audio_cnt+',0)"></button>' +
-        '<button><img src="/img/ic_remove.png" width="20px" margin-right="10px" id="remove_audio' + audio_cnt + '"></button>' +
+        '<button class="audio_track-button1"><img src="/img/ic_edit.png" width="15px" margin-right="10px" onclick="openForm('+audio_cnt+',0)"></button>' +
+        '<button class="audio_track-button2"><img src="/img/ic_remove.png" width="20px" margin-right="10px" id="remove_audio' + audio_cnt + '"></button>' +
         '</li>';
         
         $("ul").append(audio_ele_str);
@@ -187,10 +188,12 @@
         }
         
         var pic_ele_str = 
-        '<div id="pic_li_' + pic_cnt + '" class="imgbox ">' +
-        '<img id="pic_src'+ pic_cnt +'" class="demo cursor" src="" style="width:100%" onclick="currentSlide(' + pic_cnt + ')">' +
-        '<button class=imgbox-button><img src="/img/ic_edit.png" width="20px" " onclick="openForm('+pic_cnt+',1)"></button>' +
-        '<button class="imgbox-remove imgbox-button"><img src="/img/img_remove.png" width="20px" id="remove_pic' + pic_cnt + '"></button>' +
+        '<div id="pic_li_' + pic_cnt + '" class="imgbox-big">' +
+          '<div class="imgbox">' +
+          '<img id="pic_src'+ pic_cnt +'" class="demo cursor" src="" style="width:100%" onclick="currentSlide(' + pic_cnt + ')">' +
+          '</div>'+
+          '<button class=imgbox-button><img src="/img/ic_edit.png" width="20px" " onclick="openForm('+pic_cnt+',1)"></button>' +
+          '<button class="imgbox-remove imgbox-button"><img src="/img/img_remove.png" width="20px" id="remove_pic' + pic_cnt + '"></button>' +
         '</div>';
         
         $("#pic_list").append(pic_ele_str)
@@ -332,12 +335,13 @@
         <div class="search-container">
           <form onsubmit="redirect();return false;">
             <input id="userInput"type="text" placeholder="請輸入房間編號" name="search" class="searchbar">
-            <button type="submit">GO</button>
+            <button id="submit-go" type="submit">GO</button>
             <button class="user"><img src="/img/ic_user.png" width="22px"></button>
           </form> <!-- end form-->
         </div> <!-- end search-container -->
       </div> <!--end navbar -->
-
+      
+      <br>
       <hr width="100%" color="#D0D9EE" />
       <div class="title-1">
         <img src="/img/ic_track.png" class="title" width="180px">
@@ -367,7 +371,7 @@
         <button id="zoomout" class="zoombutton"><img src="/img/zoom_out.svg" width="25px"></button>
         <button id="zoomin" class="zoombutton"><img src="/img/zoom_in.svg" width="25px"></button>
         
-        <img id="add_pic" width="40px" id="btn2" left="0px" src="/img/ic_addaudio.png">
+        <img id="add_pic" width="40px" style="position: absolute;left: 30px;" src="/img/ic_addaudio.png">
         <div id="pic_list" class="imgscroll">
         </div>
       </div> 
@@ -378,12 +382,44 @@
         <button><img src="/img/ic_stop.png" class="player-btn2" width="38px" onclick = "stopAll()"></button>
         <button><img src="/img/ic_play.png" class="player-btn3" width="160px" onclick="playAll();"></button>
       </div>
-      <div class="player2">
-        
+      <div class="player2"> </div>
 
+      <div class="Metronome" >
+        <div class="container">
+          <section class="metronome-container">
+            <div class="counter"></div>
+            <i class="fa fa-cog options-btn"></i>
+            <div class="controls">
+              <label>BPM <span>
+				                    <i class="fa fa-minus bpm-minus"></i>
+				                    <input type="text" value="60" class="bpm-input" />
+				                    <i class="fa fa-plus bpm-plus"></i>
+				                  </span>
+				      </label>
+              Beat <input type="text" value="4" class="ts-top" /></label>
+              <div style="margin-bottom: 15px;">
+				        <input type="checkbox" id="timer-check" />
+				        <label for="timer-check"></label>
+
+				        Timer <input type="text" value="60" class="timer" />
+				      </div>
+              <button class="tap-btn">Tap</button>
+				      <button class="play-btn">Play</button>
+              <div class="options">
+				      <i class="fa fa-caret-down up"></i>
+				      <label>弱拍強音 <input type="range" min="0" max="500" value="200" class="beat-range" /></label>
+				      <br/>
+				      <br/>
+				      <label>高低重音 <input type="range" min="0" max="500" value="380" class="accent-range" /></label>
+				    </div>
+            </div>
+          </section>
+
+        </div>
       </div>
-      <div class="Metronome">
-      </div>
+
+
+
       
       <img src="/img/ic_video.png" class="video" width="54px">
       <div class="Videocall">
@@ -396,7 +432,6 @@
         </div>
       </div>
       <div>
-      <hr width="100%" color="#D0D9EE" />
       
       </div>
     </div>
@@ -562,6 +597,156 @@
                 window.location = input;
             }
             </script>
+<script type="text/javascript">window.AudioContext = window.AudioContext || window.webkitAudioContext;
+				var context = new AudioContext();
+				var timer, noteCount, counting, accentPitch = 380, offBeatPitch = 200;
+				var delta = 0;
+				var curTime = 0.0;
+
+				// Load up dots on pageload
+				$("document").ready(function() {
+				$(".ts-top").trigger("change");
+				});
+
+
+				/*
+				Scheduling Help by: https://www.html5rocks.com/en/tutorials/audio/scheduling/
+				*/
+				function schedule() {
+				while(curTime < context.currentTime + 0.1) {
+				  playNote(curTime);
+				  updateTime();
+				}
+				timer = window.setTimeout(schedule, 0.1);
+				}
+
+				function updateTime() {
+				curTime += 60.0 / parseInt($(".bpm-input").val(), 10);
+				noteCount++;
+				}
+
+				/* Play note on a delayed interval of t */
+				function playNote(t) {
+				    var note = context.createOscillator();
+
+				    if(noteCount == parseInt($(".ts-top").val(), 10) )
+				      noteCount = 0;
+
+				    if( $(".counter .dot").eq(noteCount).hasClass("active") )
+				      note.frequency.value = accentPitch;
+				    else
+				      note.frequency.value = offBeatPitch;
+
+				    note.connect(context.destination);
+
+				    note.start(t);
+				    note.stop(t + 0.05);
+
+				    $(".counter .dot").attr("style", "");
+
+				    $(".counter .dot").eq(noteCount).css({
+				      transform: "translateY(-10px)",
+				      background: "#F75454"
+				    });
+				}
+
+				function countDown() {
+				  var t = $(".timer");
+
+				  if( parseInt(t.val(), 10) > 0 && counting === true)
+				  {
+				      t.val( parseInt(t.val(), 10) - 1 );
+				      window.setTimeout(countDown, 1000);
+				  }
+				  else
+				  {
+				    $(".play-btn").click();
+				    t.val(60);
+				  }
+				}
+
+				/* Tap tempo */
+				$(".tap-btn").click(function() {
+				  var d = new Date();
+				  var temp = parseInt(d.getTime(), 10);
+
+				  $(".bpm-input").val( Math.ceil(60000 / (temp - delta)) );
+				  delta = temp;
+				});
+
+				/* Add or subtract bpm */
+				$(".bpm-minus, .bpm-plus").click(function() {
+				if($(this).hasClass("bpm-minus"))
+				  $(".bpm-input").val(parseInt($(".bpm-input").val(), 10) - 1 );
+				else
+				  $(".bpm-input").val(parseInt($(".bpm-input").val(), 10) + 1 );
+				});
+
+				/* Change pitches for tones in options */
+				$(".beat-range, .accent-range").change(function() {
+				  if($(this).hasClass("beat-range"))
+				    offBeatPitch = $(this).val();
+				  else
+				     accentPitch = $(this).val();
+				});
+
+				/* Activate dots for accents */
+				$(document).on("click", ".counter .dot", function() {
+				  $(this).toggleClass("active");
+				});
+
+				$(".options-btn").click(function() {
+				$(".options").toggleClass("options-active");
+				});
+
+				/* Add dots when time signature is changed */
+				$(".ts-top, .ts-bottom").on("change", function() {
+				  var _counter = $(".counter");
+				  _counter.html("");
+
+				  for(var i = 0; i < parseInt($(".ts-top").val(), 10); i++)
+				  {
+				    var temp = document.createElement("div");
+				    temp.className = "dot";
+
+				    if(i === 0)
+				      temp.className += " active";
+
+				    _counter.append( temp );
+				  }
+				});
+
+
+				/* Play and stop button */
+				$(".play-btn").click(function() {
+				if($(this).data("what") === "pause")
+				{
+				  // ====== Pause ====== //
+				  counting = false;
+				  window.clearInterval(timer);
+				  $(".counter .dot").attr("style", "");
+				  $(this).data("what", "play").attr("style","").text("Play");
+				}
+				else {
+				  // ====== Play ====== //
+				  
+				if( $("#timer-check").is(":checked") )
+				 {
+				   counting = true;
+				   countDown();
+				 }
+				  
+				  curTime = context.currentTime;
+				  noteCount = parseInt($(".ts-top").val(), 10);
+				  schedule();
+
+				  $(this).data("what", "pause").css({
+				    background: "#F75454",
+				    color: "#FFF"
+				  }).text("Stop");
+				}
+				});
+</script>
   </body>
 
 </html>

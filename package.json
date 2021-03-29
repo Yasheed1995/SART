@@ -5,6 +5,7 @@
   "keywords": "sigfox",
   "main": "server.js",
   "dependencies": {
+    "@fortawesome/fontawesome-free": "^5.15.3",
     "body-parser": "^1.19.0",
     "connect-busboy": "^0.0.2",
     "debug": "^4.1.1",
