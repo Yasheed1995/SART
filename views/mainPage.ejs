@@ -306,7 +306,6 @@
           <input type="hidden" name="room"  value="<%-data.room%>" display="hidden">
           <input id="buttonid" type="hidden" name="id" display="hidden">
           <input id="buttonid2" type="hidden" name="type" display="hidden">
-          
           <input id="buttonid3" type="file" name="file" size="20" style="display:none;" 
             onchange="
             this.form.upfile.value=this.value.substr(this.value.lastIndexOf('\\')+1);
@@ -389,8 +388,10 @@
       <div class="Videocall">
         <div class="video-container">
           <p>線上視訊會議 Video Call</p>
-          <input type="text" placeholder="貼上聊天室連結" name="search" class="searchbar-2">
-          <button type="submit" class="vd-submit">送出</button>
+          <form onsubmit="redirect2();return false;">
+            <input id="videoInput" type="text" placeholder="貼上聊天室連結" name="search" class="searchbar-2">
+            <button type="submit" class="vd-submit">送出</button>
+          </form>
         </div>
       </div>
       <div>
@@ -553,6 +554,11 @@
                 var input = document.getElementById('userInput').value;
                 if (input === "") {alert("please enter a string!"); return;}
                 window.location = '/mainPage/'+input;
+            }
+            function redirect2() {
+                var input = document.getElementById('videoInput').value;
+                if (input === "") {alert("please enter a string!"); return;}
+                window.location = input;
             }
             </script>
   </body>
