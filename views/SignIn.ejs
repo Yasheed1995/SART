@@ -95,6 +95,8 @@ function onSignIn(googleUser) {
   )
   .then(function (response) {
     console.log(response.config.data);
+    console.log('logged in!');
+    alert("Welcome, "+ profile.getGivenName());
     window.location = '/Room'
 
   })

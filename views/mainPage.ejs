@@ -32,8 +32,8 @@
       var audio_arr = [<%-audio_array%>]
       var picture_arr = [<%-picture_array%>]
       
-      if (audio_arr.length === 0 || picture_arr.length === 0)
-        alert('please at least upload an audio file & a music file!');
+      if (audio_arr.length === 0 && picture_arr.length === 0)
+        alert('please at least upload an audio file or a music file, so your room will be created.');
 
       var room = '<%- data.room %>';
       var img_ele = null,
@@ -233,6 +233,17 @@
         $(li_to_remove).remove();
         console.log('removed pic :'+n);
         count_picture -= 1;
+
+        var userObj = Object();
+        userObj.pic_cnt = n;
+        userObj.type = 'picture';
+        axios.post('/RemoveFromFirebase', JSON.stringify(userObj))
+        .then(function (response) {
+          console.log("remove audio from firebase successfully")
+        })
+        .catch(function (error) {
+          console.log(error);
+        });
       }
       
       function zoom(zoomincrement) {
@@ -316,7 +327,7 @@
     </div>
     <div class='bgimg'>
       <div class="navbar">
-        <div class="logo"><img src="/img/logo.png" width="200px"></div>
+        <div class="logo"><a href='/'><img src="/img/logo.png" width="200px"></a></div>
         <div class="dot"><img src="/img/ic_dot.png" width="15px"></div>
         <div class="search-container">
           <form action="/action_page.php">
@@ -396,7 +407,14 @@
       }
       
       function closeForm() {
-        //document.getElementById("trackName0").value = document.getElementById("trackName").value;
+
+        if (document.getElementById("buttonid4").value === "") {
+          alert("please upload file!")
+          
+          return;    
+        }
+        else {
+
         if (document.getElementById("buttonid2").value === '0') {
           var audio_cnt = document.getElementById("buttonid").value;
           var userObj = Object();
@@ -432,9 +450,11 @@
           });
         }
         
-        document.getElementById("myForm").style.display = "none";
+        document.getElementById("myModal").style.display = "none";
         document.getElementById("trackName").value = "";
         document.getElementById("buttonid4").value = "";
+        }
+
 
         //console.log('added audio :'+audio_cnt);
       }
@@ -494,6 +514,11 @@
       
       // When the user clicks on <span> (x), close the modal
       span.onclick = function() {
+        console.log(document.getElementById("buttonid4").value)
+        if (document.getElementById("buttonid4").value === null) {
+          alert("please upload file!")
+          return;    
+        }
         modal.style.display = "none";
       }
       

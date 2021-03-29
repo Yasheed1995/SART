@@ -113,6 +113,18 @@ var mainFunc = function(roomNUM) {
 router.get('/mainPage/:room', (req, res) => {
       // retrieve data of the room from firebase
       var roomID = req.params.room;
+      // after creating room, create an audio & picture to prevent crash.
+ 
+//      var userObj = Object();
+      
+//      var contentRef = database.ref('Room/'+roomID+'/audio/-1');
+//      userObj.audio_cnt = -1;
+//      contentRef.set(userObj);
+ 
+//      var userObj2 = Object();
+//      var contentRef2 = database.ref('Room/'+roomID+'/picture/-1');
+//      userObj.pic_cnt = -1;
+//      contentRef2.set(userObj2);
       mainFunc(roomID).then((val) => {
         //var user = val;
         var d = Object();
@@ -123,6 +135,11 @@ router.get('/mainPage/:room', (req, res) => {
           d.alldata.picture = []
         }
         else {
+          console.log("val: "+val.picture)
+          if (val.audio === undefined)
+              val.audio = []
+          if (val.picture === undefined)
+              val.picture = []
           d.alldata = val;
         }
         
@@ -209,69 +226,6 @@ app.post('/createRoom', (req, res) => {
     res.send({room:roomNum})
 })
 
-app.post('/upload', function(req, res, next) {
-  let sampleFile;
-  let uploadPath;
-  
-  console.log(req.body);
-  
-  if (!req.files || Object.keys(req.files).length === 0) {
-    return res.status(400).send('No files were uploaded.');
-  }
-  
-  // The name of the input field (i.e. "sampleFile") is used to retrieve the uploaded file
-  sampleFile = req.files.sampleFile;
-  
-  var dir = __dirname + '/public/assets/' + req.body.room;
-  
-  if (!fs.existsSync(dir)){
-    fs.mkdirSync(dir);
-  }
-  
-  if (req.body.type === '0') {
-    dir += '/audio'
-    if (!fs.existsSync(dir)){
-      fs.mkdirSync(dir);
-    }
-    uploadPath = __dirname + '/public/assets/' + req.body.room + '/audio/' + req.body.id + '.mp3';
-  }
-    
-  else if (req.body.type === '1') {
-    dir += '/image'
-    if (!fs.existsSync(dir)){
-      fs.mkdirSync(dir);
-    }
-    uploadPath = __dirname + '/public/assets/' + req.body.room + '/image/' + req.body.id + '.png';
-  }
-  console.log(uploadPath)
-  
-  
-  // Use the mv() method to place the file somewhere on your server
-  sampleFile.mv(uploadPath, function(err) {
-    if (err)
-      return res.status(500).send(err);
-    
-    res.status(204).send();
-  });
-});
-
-
-app.post('/removeFile', function(req, res) {
-  console.log(req.body);
-  var filenameObj = (JSON.parse(Object.keys(req.body)));
-  console.log(filenameObj);
-  if (filenameObj.type === 0) 
-    var fileName = __dirname +'/public/assets/' + req.body.room + '/audio/' + filenameObj.n + '.mp3'
-  else if (filenameObj.type === 1)
-    var fileName = __dirname +'/public/assets/' + req.body.room + '/image/' + filenameObj.n + '.png'
-  
-  fs.unlink(fileName,function(err){
-    if(err) return console.log(err);
-    console.log('removed ' + fileName + ' successfully!');
-  });  
-  
-  res.status(204).send();
-})
 
 app.post('/upload-gstorage', multer.single('file'), (req, res, next) => {
   
@@ -401,3 +355,68 @@ server.on('listening', function(){
  debug('Server listening on port %s', port);
 });
 
+/*
+app.post('/upload', function(req, res, next) {
+  let sampleFile;
+  let uploadPath;
+  
+  console.log(req.body);
+  
+  if (!req.files || Object.keys(req.files).length === 0) {
+    return res.status(400).send('No files were uploaded.');
+  }
+  
+  // The name of the input field (i.e. "sampleFile") is used to retrieve the uploaded file
+  sampleFile = req.files.sampleFile;
+  
+  var dir = __dirname + '/public/assets/' + req.body.room;
+  
+  if (!fs.existsSync(dir)){
+    fs.mkdirSync(dir);
+  }
+  
+  if (req.body.type === '0') {
+    dir += '/audio'
+    if (!fs.existsSync(dir)){
+      fs.mkdirSync(dir);
+    }
+    uploadPath = __dirname + '/public/assets/' + req.body.room + '/audio/' + req.body.id + '.mp3';
+  }
+    
+  else if (req.body.type === '1') {
+    dir += '/image'
+    if (!fs.existsSync(dir)){
+      fs.mkdirSync(dir);
+    }
+    uploadPath = __dirname + '/public/assets/' + req.body.room + '/image/' + req.body.id + '.png';
+  }
+  console.log(uploadPath)
+  
+  
+  // Use the mv() method to place the file somewhere on your server
+  sampleFile.mv(uploadPath, function(err) {
+    if (err)
+      return res.status(500).send(err);
+    
+    res.status(204).send();
+  });
+});
+
+
+app.post('/removeFile', function(req, res) {
+  console.log(req.body);
+  var filenameObj = (JSON.parse(Object.keys(req.body)));
+  console.log(filenameObj);
+  if (filenameObj.type === 0) 
+    var fileName = __dirname +'/public/assets/' + req.body.room + '/audio/' + filenameObj.n + '.mp3'
+  else if (filenameObj.type === 1)
+    var fileName = __dirname +'/public/assets/' + req.body.room + '/image/' + filenameObj.n + '.png'
+  
+  fs.unlink(fileName,function(err){
+    if(err) return console.log(err);
+    console.log('removed ' + fileName + ' successfully!');
+  });  
+  
+  res.status(204).send();
+})
+*/
