@@ -231,10 +231,15 @@ left: 200px;
 	top: 720px;
 }
 
+#playerContainer {
+  position: absolute;
+  top: 15px;
+  left: 240px;
+}
 
 .Metronome{
 	width: 430px;
-	height: 290px;
+	height: 340px;
 	border-radius: 10px;
 	position: absolute;
 	left: 500px;

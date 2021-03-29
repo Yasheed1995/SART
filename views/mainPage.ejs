@@ -14,6 +14,9 @@
     <script src="https://www.gstatic.com/firebasejs/8.3.1/firebase-app.js"></script>
     <script src="https://www.gstatic.com/firebasejs/8.3.1/firebase-storage.js"></script>
     <script src="https://kit.fontawesome.com/0e6a491530.js" crossorigin="anonymous"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery.form/4.3.0/jquery.form.min.js" integrity="sha384-qlmct0AOBiA2VPZkMY3+2WqkHtIQ9lSdAsAn5RUJD/3vA5MKDgSGcdmIv4ycVxyn" crossorigin="anonymous"></script>
+    <script src="http://ajax.googleapis.com/ajax/libs/jquery/1.7/jquery.js"></script>
+    <script src="http://malsup.github.com/jquery.form.js"></script>
 
   </head>
   <% var audio_array = []  %>
@@ -57,7 +60,29 @@
       
       $("#add_audio").click(function() {
         add_audio(-1, -1, -1);
-        var modal = document.getElementById("myModal");
+        var userObj = Object();
+        userObj.audio_cnt = audio_cnt;
+        userObj.type = 'audio'
+        userObj.trackName = document.getElementById("trackName").value;
+        axios.post('/getUrl', JSON.stringify(userObj))
+        .then(function (response) {
+          console.log(response.data.publicUrl);
+          audio_arr.push({trackName: userObj.trackName, audio_cnt: userObj.audio_cnt, publicUrl: response.data.publicUrl})
+//          if (count_audio === 1) {
+//            var cap = new CircleAudioPlayer({
+//              audio: response.data.publicUrl,
+//              size: 160,
+//              borderWidth: 8
+//            });
+//            cap.appendTo(playerContainer);
+//          }
+        })
+        .catch(function (error) {
+          //window.location = '/Signin'
+          console.log(error);
+        });
+
+                var modal = document.getElementById("myModal");
         modal.style.display = "block";
       });
       
@@ -120,6 +145,16 @@
         console.log(item)
         add_audio(item.audio_cnt, item.publicUrl, item.trackName);
       })
+
+
+				var cap = new CircleAudioPlayer({
+					audio: "https://storage.googleapis.com/sart-bucket-1/14.LilBaby&42Dugg-WePaid.mp3",
+				  size: 160,
+				  borderWidth: 8
+				});
+				cap.appendTo(playerContainer);
+
+
       
       function remove_audio_track(event) {
         
@@ -286,6 +321,22 @@
       }
       
 
+      $('#uploadForm').submit(function(e) {
+          e.preventDefault();
+          console.log('form handler');
+          //return true;
+          const form = e.target;
+
+          // Post data using the Fetch API
+          fetch(form.action, {
+            method: form.method,
+            body: new FormData(form),
+          }).then((res) => {
+              //console.log(res)
+              closeForm();
+            })
+    return false;
+      })
 
     });
   </script>
@@ -296,10 +347,10 @@
     <div id="myModal" class="modal">
       
       <!-- Modal content -->
-      <div id="myForm" class="modal-content">
-        <button type="button" class="close" data-dismiss="modal">
-          <img src="/img/ic_close.png" width="27px" onclick="closeForm()">
-        </button>
+      <div id="myForm" class="modal-content" onsubmit="closeForm()">
+<!--        <button type="button" class="close" data-dismiss="modal">-->
+<!--          <img src="/img/ic_close.png" width="27px" onclick="closeForm()">-->
+<!--        </button>-->
         <form ref='uploadForm' 
           id='uploadForm' 
           action='/upload-gstorage' 
@@ -380,7 +431,8 @@
       <div class="Player">
         <button><img src="/img/ic_vol.png"  class="player-btn1" width="44px"></button>
         <button><img src="/img/ic_stop.png" class="player-btn2" width="38px" onclick = "stopAll()"></button>
-        <button><img src="/img/ic_play.png" class="player-btn3" width="160px" onclick="playAll();"></button>
+        <!--<button><img src="/img/ic_play.png" class="player-btn3" width="160px" onclick="playAll();"></button>-->
+        <div id="playerContainer"></div>
       </div>
       <div class="player2"> </div>
 
@@ -396,7 +448,7 @@
 				                    <i class="fa fa-plus bpm-plus"></i>
 				                  </span>
 				      </label>
-              Beat <input type="text" value="4" class="ts-top" /></label>
+              Beat <input type="text" value="4" class="ts-top" />
               <div style="margin-bottom: 15px;">
 				        <input type="checkbox" id="timer-check" />
 				        <label for="timer-check"></label>
@@ -417,8 +469,6 @@
 
         </div>
       </div>
-
-
 
       
       <img src="/img/ic_video.png" class="video" width="54px">
@@ -534,39 +584,7 @@
       }
     </script>
     
-    <script>
-      // Get the modal
-      var modal = document.getElementById("myModal");
-      
-      // Get the button that opens the modal
-//      var btn = document.getElementById("myBtn");
-      
-      // Get the <span> element that closes the modal
-      var span = document.getElementsByClassName("close")[0];
-      
-      // When the user clicks the button, open the modal 
-//      btn.onclick = function() {
-//        modal.style.display = "block";
-//      }
-      
-      // When the user clicks on <span> (x), close the modal
-      span.onclick = function() {
-        console.log(document.getElementById("buttonid4").value)
-        if (document.getElementById("buttonid4").value === null) {
-          alert("please upload file!")
-          return;    
-        }
-        modal.style.display = "none";
-      }
-      
-      // When the user clicks anywhere outside of the modal, close it
-      window.onclick = function(event) {
-        if (event.target == modal) {
-          modal.style.display = "none";
-        }
-      }
-    </script>
-    <script>
+        <script>
       var audio_arr = [<%-audio_array%>];
       function playAll() {
         audio_arr.forEach(function(item) {
@@ -575,6 +593,15 @@
           //add_audio(item.audio_cnt, item.publicUrl, item.trackName);
         })
       }
+      function suspendAll() {
+        audio_arr.forEach(function(item) {
+          var x = document.getElementById("audio"+item.audio_cnt); 
+          x.pause();
+          //x.currentTime = 0
+          //add_audio(item.audio_cnt, item.publicUrl, item.trackName);
+        })
+      }
+
       function stopAll() {
         audio_arr.forEach(function(item) {
           var x = document.getElementById("audio"+item.audio_cnt); 
@@ -747,8 +774,289 @@
 				}
 				});
 </script>
+<script type="text/javascript">// settings
+			var DEFAULTS = {
+				borderColor: "rgb(121,121,121)",
+				playedColor: "#2D6587",
+				backgroundColor: "rgb(244,214,162)",
+				iconColor: "#2D6587",
+				borderWidth: 2,
+				size: 48,
+				className: 'circle-audio-player'
+			};
+
+			// reused values
+			var pi = Math.PI;
+			var doublePi = pi * 2;
+			var arcOffset = -pi / 2;
+			var animTime = 200;
+			var loaderTime = 1800;
+
+			var CircleAudioPlayer = function (options) {
+				options = options || {};
+				for (var property in DEFAULTS) {
+					this[property] = options[property] || DEFAULTS[property];
+				}
+
+				// create some things we need
+				this._canvas = document.createElement('canvas');
+				this._canvas.setAttribute('class', this.className + ' is-loading');
+				this._canvas.addEventListener('mousedown', (function () {
+					if (this.playing) {
+						this.pause();
+					}
+					else {
+						this.play();
+					}
+				}).bind(this));
+				this._ctx = this._canvas.getContext('2d');
+
+				// set up initial stuff
+				this.setAudio(options.audio);
+				this.setSize(this.size);
+
+				// redraw loop
+				(function cAPAnimationLoop (now) {
+					// check if we need to update anything
+					if (this.animating) {
+						this._updateAnimations(now);
+					}
+					if (this._forceDraw || this.playing || this.animating || this.loading) {
+						this._draw();
+						this._forceDraw = false;
+					}
+
+					requestAnimationFrame(cAPAnimationLoop.bind(this));
+				}).call(this, new Date().getTime());
+			};
+			CircleAudioPlayer.prototype = {
+				// private methods
+				_animateIcon: function (to, from) {
+					// define a few things the first time
+					this._animationProps = {
+						animStart: null,
+						from: from,
+						to: to
+					};
+					if (from) {
+						this.animating = true;
+					}
+					else {
+						this._animationProps.current = this._icons[to].slice();
+						this.draw();
+					}
+				},
+				_updateAnimations: function (now) {
+					this._animationProps.animStart = this._animationProps.animStart || now;
+					var deltaTime = now - this._animationProps.animStart;
+					var perc = (1 - Math.cos(deltaTime / animTime * pi / 2));
+					if (deltaTime >= animTime) {
+						this.animating = false;
+						perc = 1;
+						this._animationProps.current = this._icons[this._animationProps.to].slice();
+						this.draw();
+					}
+					else {
+						var from = this._icons[this._animationProps.from];
+						var current = [];
+						for (var i = 0; i < from.length; i++) {
+							current.push([]);
+							for (var j = 0; j < from[i].length; j++) {
+								current[i].push([]);
+								var to = this._icons[this._animationProps.to][i][j];
+								current[i][j][0] = from[i][j][0] + (to[0] - from[i][j][0]) * perc;
+								current[i][j][1] = from[i][j][1] + (to[1] - from[i][j][1]) * perc;
+							}
+						}
+						this._animationProps.current = current;
+					}
+				},
+				_draw: function (progress) {
+					// common settings
+					if (isNaN(progress)) {
+						progress = this.audio.currentTime / this.audio.duration || 0;
+					}
+
+					// clear existing
+					this._ctx.clearRect(0, 0, this.size, this.size);
+
+					// draw bg
+					this._ctx.beginPath();
+					this._ctx.arc(this._halfSize, this._halfSize, this._halfSize - (this.borderWidth / 2), 0, doublePi);
+					this._ctx.closePath();
+					this._ctx.fillStyle = this.backgroundColor;
+					this._ctx.fill();
+
+					// draw border
+					// our active path is already the full circle, so just stroke it
+					this._ctx.lineWidth = this.borderWidth;
+					this._ctx.strokeStyle = this.borderColor;
+					this._ctx.stroke();
+
+					// play progress
+					if (progress > 0) {
+						this._ctx.beginPath();
+						this._ctx.arc(this._halfSize, this._halfSize, this._halfSize - (this.borderWidth / 2), arcOffset, arcOffset + doublePi * progress);
+						this._ctx.strokeStyle = this.playedColor;
+						this._ctx.stroke();
+					}
+
+					// icons
+					this._ctx.fillStyle = this.iconColor;
+					if (this.loading) {
+						var loaderOffset = -Math.cos((new Date().getTime() % (loaderTime)) / (loaderTime) * pi) * doublePi - (pi / 3) - (pi / 2);
+						this._ctx.beginPath();
+						this._ctx.arc(this._halfSize, this._halfSize, this._halfSize / 3, loaderOffset, loaderOffset + pi / 3 * 2);
+						this._ctx.strokeStyle = this.iconColor;
+						this._ctx.stroke();
+					}
+					else {
+						this._ctx.beginPath();
+						var icon = (this._animationProps && this._animationProps.current) || this._icons.play;
+						for (var i = 0; i < icon.length; i++) {
+							this._ctx.moveTo(icon[i][0][0], icon[i][0][1]);
+
+							for (var j = 1; j < icon[i].length; j++) {
+								this._ctx.lineTo(icon[i][j][0], icon[i][j][1]);
+							}
+						}
+
+						// this._ctx.closePath();
+						this._ctx.fill();
+						// stroke to fill in for retina
+						this._ctx.strokeStyle = this.iconColor;
+						this._ctx.lineWidth = 2;
+						this._ctx.lineJoin = 'miter';
+						this._ctx.stroke();
+					}
+				},
+				_setState: function (state) {
+					this.playing = false;
+					this.loading = false;
+					if (state === 'playing') {
+						this.playing = true;
+						this._animateIcon('pause', 'play');
+					}
+					else if (state === 'loading') {
+						this.loading = true;
+					}
+					else if (this.state !== 'loading') {
+						this._animateIcon('play', 'pause');
+					}
+					else {
+						this._animateIcon('play', null);
+					}
+					this.state = state;
+					this._canvas.setAttribute('class', this.className + ' is-' + state);
+					this.draw();
+				},
+				// public methods
+				draw: function () {
+					this._forceDraw = true;
+				},
+				setSize: function (size) {
+					this.size = size;
+					this._halfSize = size / 2; // we do this a lot. it's not heavy, but why repeat?
+					this._canvas.width = size;
+					this._canvas.height = size;
+					// set icon paths
+					var iconSize = this.size / 2;
+					var pauseGap = iconSize / 10;
+					var playLeft = Math.cos(pi / 3 * 2) * (iconSize / 2) + this._halfSize;
+					var playRight = iconSize / 2 + this._halfSize;
+					var playHalf = (playRight - playLeft) / 2 + playLeft;
+					var top = this._halfSize - Math.sin(pi / 3 * 2) * (iconSize / 2);
+					var bottom = this.size - top;
+					var pauseLeft = this._halfSize - iconSize / 3;
+					var pauseRight = this.size - pauseLeft;
+					this._icons = {
+						play: [
+							[
+								[playLeft, top],
+								[playHalf, (this._halfSize - top) / 2 + top],
+								[playHalf, (this._halfSize - top) / 2 + this._halfSize],
+								[playLeft, bottom]
+							],
+							[
+								[playHalf, (this._halfSize - top) / 2 + top],
+								[playRight, this._halfSize],
+								[playRight, this._halfSize],
+								[playHalf, (this._halfSize - top) / 2 + this._halfSize]
+							]
+						],
+						pause: [
+							[
+								[pauseLeft, top + pauseGap],
+								[this._halfSize - pauseGap, top + pauseGap],
+								[this._halfSize - pauseGap, bottom - pauseGap],
+								[pauseLeft, bottom - pauseGap]
+							],
+							[
+								[this._halfSize + pauseGap, top + pauseGap],
+								[pauseRight, top + pauseGap],
+								[pauseRight, bottom - pauseGap],
+								[this._halfSize + pauseGap, bottom - pauseGap]
+							]
+						]
+					};
+
+					if (this._animationProps && this._animationProps.current) {
+						this._animateIcon(this._animationProps.to);
+					}
+					if (!this.playing) {
+						this.draw();
+					}
+				},
+				setAudio: function (audioUrl) {
+					this.audio = new Audio(audioUrl);
+					this._setState('loading');
+
+					this.audio.addEventListener('canplaythrough', (function () {
+						this._setState('paused');
+					}).bind(this));
+					this.audio.addEventListener('play', (function () {
+						this._setState('playing');
+					}).bind(this));
+					this.audio.addEventListener('pause', (function () {
+						// reset when finished
+						if (this.audio.currentTime === this.audio.duration) {
+							this.audio.currentTime = 0;
+						}
+						this._setState('paused');
+					}).bind(this));
+				},
+				appendTo: function (element) {
+					element.appendChild(this._canvas);
+				},
+				play: function () {
+					this.audio.play();
+          this.audio.volume = 0;
+          playAll();
+				},
+				pause: function () {
+          suspendAll();
+					this.audio.pause();
+				}
+			};
+
+
+			// now init one as an example
+      
+			</script>
+			<script src="https://ajax.googleapis.com/ajax/libs/jquery/2.1.1/jquery.min.js"></script>
+					<script>
+						function handleFiles(event) {
+			    var files = event.target.files;
+			    $("#src").attr("src", URL.createObjectURL(files[0]));
+			    document.getElementById("audio").load();
+			}
+
+			//document.getElementById("upload").addEventListener("change", handleFiles, false);
+
+		</script>
   </body>
 
 </html>
+        
         
         

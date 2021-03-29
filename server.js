@@ -229,6 +229,7 @@ app.post('/createRoom', (req, res) => {
 
 
 app.post('/upload-gstorage', multer.single('file'), (req, res, next) => {
+  console.log('req data:',req)
   
   if (!req.files.file) {
     res.status(400).send('No file uploaded.');
@@ -325,13 +326,11 @@ app.post('/getUrlFromFirebase', (req, res) => {
     console.log(data)
     res.send({publicUrl:data.publicUrl})
   })
-  
 })
 
 
 app.post('/RemoveFromFirebase', (req, res) => {
   //console.log("/get Url return %s:" + resource_url);
-  console.log(req.body)
   var filenameObj = (JSON.parse(Object.keys(req.body)));
   console.log(filenameObj);
   res.send({publicUrl:resource_url})
