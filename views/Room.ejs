@@ -14,10 +14,55 @@ body, html {height: 100%}
   background-position: center;
   background-size: cover;
 }
+
+.search-container{
+  display: none;
+	text-align:center;
+	top: 12px;
+	width: 360px;
+	height: 44px;
+	background-color: none;
+	border: 1px solid #A8B2F9;
+	border-radius: 7px;
+	opacity: 1;
+	box-shadow: 1px 5px 10px rgba(129,167,201,0.6);
+	position: absolute;
+	top: 800px;
+	left: 900px;
+}
+
+.search-container button {
+  padding: 5px 10px;
+  margin-top: 6px;
+  margin-right: 16px;
+  background: none;
+  font-size: 17px;
+  font-weight: bold;
+  border: none;
+  cursor: pointer;
+}
+
+.searchbar{
+	width: 235px;
+	height: 28px;
+	border: 1px solid #7391F9;
+	border-radius: 20px;
+	padding: 10px;
+	margin: auto;
+}
+
+
 </style>
 <body>
 
+
 <div class="bgimg w3-display-container">
+<div id="searchRoom" class="search-container">
+  <form onsubmit="redirect();return false;">
+    <input id="userInput"type="text" placeholder="請輸入房間編號" name="search" class="searchbar">
+    <button type="submit">GO</button>
+  </form> <!-- end form-->
+</div> <!-- end search-container -->
   <div class="w3-display-middle">
     <br>
     <br>
@@ -26,7 +71,7 @@ body, html {height: 100%}
     <br>
     <div class="row">
       <button class="btn" onclick="createRoom();"><span>創建房間</span></button>
-      <div class="btn" style="float: right;" onclick="createRoom();"><span>加入房間</span></div>
+      <div class="btn" style="float: right;" onclick="document.getElementById('searchRoom').style.display='block'"><span>加入房間</span></div>
     </div>
 <!--    <div class="btn" href="#"><span>加入房間</span></div>-->
   </div>
@@ -53,6 +98,18 @@ body, html {height: 100%}
     }
     
   </script>
+    <script type='text/javascript'>
+            function redirect() {
+                var input = document.getElementById('userInput').value;
+                if (input === "") {alert("please enter a string!"); return;}
+                window.location = '/mainPage/'+input;
+            }
+            function redirect2() {
+                var input = document.getElementById('videoInput').value;
+                if (input === "") {alert("please enter a string!"); return;}
+                window.location = input;
+            }
+            </script>
 </body>
 </html>
 
