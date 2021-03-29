@@ -382,7 +382,8 @@
     <div class='bgimg'>
       <div class="navbar">
         <div class="logo"><a href='/'><img src="/img/logo.png" width="200px"></a></div>
-        <div class="dot"><img src="/img/ic_dot.png" width="15px"></div>
+        <div class="dot"><img src="/img/ic_dot.png" width="15px"></div>
+
         <div class="search-container">
           <form onsubmit="redirect();return false;">
             <input id="userInput"type="text" placeholder="請輸入房間編號" name="search" class="searchbar">
@@ -393,7 +394,8 @@
       </div> <!--end navbar -->
       
       <br>
-      <hr width="100%" color="#D0D9EE" />
+      <hr width="100%" color="#D0D9EE" />
+
       <div class="title-1">
         <img src="/img/ic_track.png" class="title" width="180px">
       </div>
@@ -434,12 +436,18 @@
         <!--<button><img src="/img/ic_play.png" class="player-btn3" width="160px" onclick="playAll();"></button>-->
         <div id="playerContainer"></div>
       </div>
-      <div class="player2"> </div>
+<!--       <div class="player2"> </div> -->
 
       <div class="Metronome" >
         <div class="container">
           <section class="metronome-container">
-            <div class="counter"></div>
+            <div class="counter">
+              <div class="dot active"></div>
+              <div class="dot active"></div>
+              <div class="dot active"></div>
+              <div class="dot active"></div>
+            <div>
+            </div>
             <i class="fa fa-cog options-btn"></i>
             <div class="controls">
               <label>BPM <span>
@@ -459,10 +467,8 @@
 				      <button class="play-btn">Play</button>
               <div class="options">
 				      <i class="fa fa-caret-down up"></i>
-				      <label>弱拍強音 <input type="range" min="0" max="500" value="200" class="beat-range" /></label>
-				      <br/>
-				      <br/>
-				      <label>高低重音 <input type="range" min="0" max="500" value="380" class="accent-range" /></label>
+				      <label>弱拍強音 <input type="range" min="0" max="500" value="200" class="beat-range" id="slider" /></label>
+				      <label>高低重音 <input type="range" min="0" max="500" value="380" class="accent-range" id="slider" /></label>
 				    </div>
             </div>
           </section>

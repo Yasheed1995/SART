@@ -190,7 +190,8 @@ audio{
 	height: 191px;
 	border: 1px solid #66EAFF;
 	border-radius: 6px;
-	background-color: rgba(0,0,0,0.6);
+	background-color: rgba(0,0,0,0.6);
+
 	box-shadow: 0.5px 5px 10px rgba(129,167,201,0.6);
 	position: absolute;
 	left: -5px;
@@ -248,6 +249,7 @@ left: 200px;
 }
 
 /* 節拍器 */
+
 .container {
   width: 100%;
 }
@@ -276,6 +278,7 @@ left: 200px;
   max-height: 1000px !important;
   padding: 15px;
   overflow: visible !important;
+  width: 180px;
 }
 .metronome-container .options {
   max-height: 0px;
@@ -284,7 +287,7 @@ left: 200px;
   overflow: hidden;
   transition: all 0.25s;
   position: absolute;
-  top: 50px;
+  top: 0px;
   right: 15px;
 }
 .metronome-container .options .up {
@@ -298,10 +301,12 @@ left: 200px;
 }
 .metronome-container .options label {
   display: block;
-  margin-top: 10px;
+/*  margin-top: 0px;*/
+  width: 100px;
 }
 .metronome-container .counter {
   width: 100%;
+  height: 60px;
   padding-bottom: 10px;
   background: #404040;
   text-align: center;
@@ -323,17 +328,16 @@ left: 200px;
 }
 .metronome-container .controls {
   color: #fff;
-  padding: 20px;
+  padding: 0px;
   text-align: center;
 }
 .metronome-container .controls label {
   display: block;
-  margin-bottom: 18px;
 }
 .metronome-container .controls label span {
   background: #fff;
   color: #222;
-  padding: 5px;
+  padding: 8px;
 }
 .metronome-container .controls label span i {
   cursor: pointer;
@@ -344,11 +348,14 @@ left: 200px;
 }
 .metronome-container .controls input {
   width: 30px;
-  border: 0px solid;
+  border: none;
   color: #222;
   text-align: center;
   padding: 4px;
+  border-radius: 0;
+  background: #fff;
 }
+
 .metronome-container .controls select {
   border: 0px;
   color: #222;
@@ -377,6 +384,12 @@ left: 200px;
 .metronome-container .controls .tap-btn:hover {
   background: #959595;
 }
+
+#slider{
+	width: 140px;
+	background: #D3D3D3;
+}
+
 
 input[type=range] {
   -webkit-appearance: none !important;
@@ -857,7 +870,8 @@ input[type=text]{
 		cursor: pointer;
 }
 
-#submit-go{	margin-left: -20px;
+#submit-go{
+	margin-left: -20px;
 	font-size:18px;
 	font-family: sans-serif;
 	font-weight: 700;
