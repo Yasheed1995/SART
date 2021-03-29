@@ -33,7 +33,8 @@
       var picture_arr = [<%-picture_array%>]
       
       if (audio_arr.length === 0 && picture_arr.length === 0)
-        alert('please at least upload an audio file or a music file, so your room will be created.');
+        //alert('please at least upload an audio file or a music file, so your room will be created.');
+        alert('請至少加入一項資源，不然房間將不會被建立');
 
       var room = '<%- data.room %>';
       var img_ele = null,

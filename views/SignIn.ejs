@@ -96,7 +96,7 @@ function onSignIn(googleUser) {
   .then(function (response) {
     console.log(response.config.data);
     console.log('logged in!');
-    alert("Welcome, "+ profile.getGivenName());
+    alert(profile.getGivenName() + ', 您好, 歡迎使用SART-reharse');
     window.location = '/Room'
 
   })
