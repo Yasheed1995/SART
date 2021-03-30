@@ -389,9 +389,10 @@
     <div class='bgimg'>
       <div class="navbar">
         <div class="logo"><a href='/'><img src="/img/logo.png" width="200px"></a></div>
-        <a href="/about">關於</a>
-        <div class="dot"><img src="/img/ic_dot.png" width="15px"></div>
-
+        <a href="/about" class="about">關於</a>
+             <div class="title-room">
+                <p>房間號碼：<%-data.room%></p>
+              </div>
         <div class="search-container">
           <form onsubmit="redirect();return false;">
             <input id="userInput"type="text" placeholder="請輸入房間編號" name="search" class="searchbar">
@@ -403,10 +404,6 @@
       
       <br>
       <hr width="100%" color="#D0D9EE" />
-
-      <div class="title-room">
-        <h3>房間號碼：<%-data.room%></h3>
-      </div>
 
       <div class="title-1">
         <img src="/img/ic_track.png" class="title" width="180px">

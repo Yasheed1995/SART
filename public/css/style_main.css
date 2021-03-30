@@ -35,6 +35,19 @@ hr.line{
 	margin: 20px 0 5px 146px;
 }
 
+.about{
+	font-weight: 700;
+	font-size: 14px;
+	margin-left: 50px; 
+	text-decoration:none;
+	color: #0D3354;
+	letter-spacing: 3px;
+}
+
+.about:hover{
+	opacity: .5;
+}
+
 .dot{
 	display: inline-block;
 	position: relative;
@@ -98,6 +111,13 @@ hr.line{
 	position: absolute;
 	top: 6px;
 	left: 370px;
+}
+
+.title-room{
+	display: inline-block;
+	margin-left: 3%;
+	color: #0D3354;
+	letter-spacing: 3px;
 }
 
 .title-row{
@@ -352,7 +372,7 @@ left: 200px;
   color: #fa6900;
 }
 .metronome-container .controls input {
-  width: 30px;
+  width: 60px;
   border: none;
   color: #222;
   text-align: center;
@@ -488,7 +508,7 @@ p{
 .video{
 	position: absolute;
 	left: 102px;
-	top: 880px;
+	top: 890px;
 }
 
 * {box-sizing:border-box}
