@@ -50,6 +50,7 @@ const multer = Multer({
 
 var RoomNum = "";
 var resource_url = "";
+var resource_urls = [];
 
 var bucket = storage.bucket('sart-bucket-1');
 
@@ -114,8 +115,6 @@ var mainFunc = function(roomNUM) {
     var ref = database.ref('Room/'+roomNUM)
     ref.once('value').then((snapshot) => {
       var data = snapshot.val()
-      console.log(data);
-      
       resolve(data)
     })
   })
@@ -137,27 +136,43 @@ router.get('/mainPage/:room', (req, res) => {
 //      userObj.pic_cnt = -1;
 //      contentRef2.set(userObj2);
       mainFunc(roomID).then((val) => {
-        //var user = val;
+        console.log(val)
+        
         var d = Object();
+        var audio_list = []
+        var picture_list = []
+        var link = "";
+
+        if (val !== null) {
+
+        if (val && val.hasOwnProperty('link')) {
+          console.log('has link!');
+          link = val.link; 
+        }
+
+        if (val && val.hasOwnProperty('audio')) {
+          console.log('has audio!')
+          for (const [key, value] of Object.entries(val.audio)) {
+            console.log(`${key}: ${value}`);
+            audio_list.push(value)
+          }
+        }
+        if (val && val.hasOwnProperty('picture')) {
+          console.log('has picture!')
+          for (const [key, value] of Object.entries(val.picture)) {
+            console.log(`${key}: ${value}`);
+            picture_list.push(value)
+          }
+        }
+        } 
+        
+
         d.room = roomID;
-        if (val === null) {
-          d.alldata = Object();
-          d.alldata.audio = []
-          d.alldata.picture = []
-        }
-        else {
-          console.log("val: "+val.picture)
-          if (val.audio === undefined)
-              val.audio = []
-          if (val.picture === undefined)
-              val.picture = []
-          if (val.link === undefined)
-              val.link = ""
-          d.alldata = val;
-        }
+        d.audio = audio_list;
+        d.picture = picture_list;
+        d.link = link;
         
         RoomNum = roomID;
-        console.log('alldata: ', d.alldata);
         
         res.format({
           html: function() {
@@ -248,7 +263,7 @@ app.post('/createRoom', (req, res) => {
 
 
 app.post('/upload-gstorage', multer.single('file'), (req, res, next) => {
-  console.log('req data:',req)
+  console.log('req body:',req.body)
   
   if (!req.files.file) {
     res.status(400).send('No file uploaded.');
@@ -271,16 +286,17 @@ app.post('/upload-gstorage', multer.single('file'), (req, res, next) => {
     const publicUrl = format(
       `https://storage.googleapis.com/${bucket.name}/${blob.name}`
     );
+    resource_urls.push(publicUrl)
 //    console.log(RoomNum)
     resource_url = publicUrl;
+    console.log('got url: ',publicUrl);
     var response_data = 
     {
       room: RoomNum,
       publicUrl: publicUrl
     }
-    //res.status(200).send(response_data);
+    res.status(200).send(publicUrl);
     
-    res.status(204).send();
     //res.status(204).send();
   });
   
@@ -290,21 +306,27 @@ app.post('/upload-gstorage', multer.single('file'), (req, res, next) => {
 
 app.post('/getUrl', (req, res) => {
     //console.log("/get Url return %s:" + resource_url);
-    console.log(req.body)
+    //console.log(req.body)
     var filenameObj = (JSON.parse(Object.keys(req.body)));
-    console.log(filenameObj);
+    //console.log(filenameObj);
+    console.log(resource_urls)
+    resource_url = resource_urls.shift()
+    console.log("send url: " ,resource_url)
+    if (resource_url === undefined) return;
     res.send({publicUrl:resource_url, trackName: filenameObj.trackName})
     var userObj = Object();
+
+    
     
     if (filenameObj.type === 'audio'){
-      var contentRef = database.ref('Room/'+RoomNum+'/audio/'+filenameObj.audio_cnt);
+      var contentRef = database.ref('Room/'+RoomNum+'/audio/audio'+filenameObj.audio_cnt);
       userObj.trackName = filenameObj.trackName;
       userObj.publicUrl = resource_url;
       userObj.audio_cnt = filenameObj.audio_cnt;
     }
   
     else if (filenameObj.type === 'picture') {
-      var contentRef = database.ref('Room/'+RoomNum+'/picture/'+filenameObj.pic_cnt);
+      var contentRef = database.ref('Room/'+RoomNum+'/picture/picture'+filenameObj.pic_cnt);
       userObj.publicUrl = resource_url;
       userObj.pic_cnt = filenameObj.pic_cnt;
     }
@@ -357,10 +379,10 @@ app.post('/getUrlFromFirebase', (req, res) => {
   var userObj = Object();
   
   if (filenameObj.type === 'audio'){
-    var contentRef = database.ref('Room/'+RoomNum+'/audio/'+filenameObj.audio_cnt);
+    var contentRef = database.ref('Room/'+RoomNum+'/audio/audio'+filenameObj.audio_cnt);
   }
   else if (filenameObj.type === 'picture') {
-    var contentRef = database.ref('Room/'+RoomNum+'/picture/'+filenameObj.pic_cnt);
+    var contentRef = database.ref('Room/'+RoomNum+'/picture/picture'+filenameObj.pic_cnt);
   }
   
   contentRef.once('value').then((snapshot) => {
@@ -379,10 +401,10 @@ app.post('/RemoveFromFirebase', (req, res) => {
   var userObj = Object();
   
   if (filenameObj.type === 'audio'){
-    var contentRef = database.ref('Room/'+RoomNum+'/audio/'+filenameObj.audio_cnt);
+    var contentRef = database.ref('Room/'+RoomNum+'/audio/audio'+filenameObj.audio_cnt);
   }
   else if (filenameObj.type === 'picture') {
-    var contentRef = database.ref('Room/'+RoomNum+'/picture/'+filenameObj.pic_cnt);
+    var contentRef = database.ref('Room/'+RoomNum+'/picture/picture'+filenameObj.pic_cnt);
   }
   contentRef.remove();
 })

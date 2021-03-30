@@ -21,11 +21,11 @@
   </head>
   <% var audio_array = []  %>
   <% var picture_array = []%>
-  <% data.alldata.audio.forEach(function(item) {       %>
+  <% data.audio.forEach(function(item) {       %>
   
   <% audio_array.push(JSON.stringify(item))    %>
   <% })%>
-  <% data.alldata.picture.forEach(function(item) {       %>
+  <% data.picture.forEach(function(item) {       %>
 
   <% picture_array.push(JSON.stringify(item) )   %>
   <% })%>
@@ -34,7 +34,7 @@
 
   <script>
     $(document).ready(function(){
-      var link = '<%-data.alldata.link%>'
+      var link = '<%-data.link%>'
       console.log('link: ', link);
       if (link !== "") {
         document.getElementById('videoInput').value = link;
@@ -43,9 +43,9 @@
       var audio_arr = [<%-audio_array%>]
       var picture_arr = [<%-picture_array%>]
       
-      if (audio_arr.length === 0 && picture_arr.length === 0)
+      //if (audio_arr.length === 0 && picture_arr.length === 0)
         //alert('please at least upload an audio file or a music file, so your room will be created.');
-        alert('請至少加入一項資源，不然房間將不會被建立');
+        //alert('請至少加入一項資源，不然房間將不會被建立');
 
       var room = '<%- data.room %>';
       var img_ele = null,
@@ -75,14 +75,6 @@
         .then(function (response) {
           console.log(response.data.publicUrl);
           audio_arr.push({trackName: userObj.trackName, audio_cnt: userObj.audio_cnt, publicUrl: response.data.publicUrl})
-//          if (count_audio === 1) {
-//            var cap = new CircleAudioPlayer({
-//              audio: response.data.publicUrl,
-//              size: 160,
-//              borderWidth: 8
-//            });
-//            cap.appendTo(playerContainer);
-//          }
         })
         .catch(function (error) {
           //window.location = '/Signin'
@@ -327,7 +319,6 @@
         }
       }
       
-
       $('#uploadForm').submit(function(e) {
           e.preventDefault();
           console.log('form handler');
@@ -339,11 +330,17 @@
             method: form.method,
             body: new FormData(form),
           }).then((res) => {
-              //console.log(res)
+              //console.log('res:', res)
+              console.log('res.status: ', res.status)
+              if (res.status === 500) {
+                alert('上傳失敗！請再試一次')
+                return;
+              }
               closeForm();
             })
-    return false;
+         return false;
       })
+      
 
     });
   </script>
