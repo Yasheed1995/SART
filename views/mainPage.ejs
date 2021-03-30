@@ -30,9 +30,16 @@
   <% picture_array.push(JSON.stringify(item) )   %>
   <% })%>
 
+  
+
   <script>
     $(document).ready(function(){
-      
+      var link = '<%-data.alldata.link%>'
+      console.log('link: ', link);
+      if (link !== "") {
+        document.getElementById('videoInput').value = link;
+        document.getElementById('videoInput').readOnly = true; 
+      }
       var audio_arr = [<%-audio_array%>]
       var picture_arr = [<%-picture_array%>]
       
@@ -348,9 +355,9 @@
       
       <!-- Modal content -->
       <div id="myForm" class="modal-content" onsubmit="closeForm()">
-<!--        <button type="button" class="close" data-dismiss="modal">-->
-<!--          <img src="/img/ic_close.png" width="27px" onclick="closeForm()">-->
-<!--        </button>-->
+        <button type="button" class="close" data-dismiss="modal">
+          <img src="/img/ic_close.png" width="27px" onclick="closeForm()">
+        </button>
         <form ref='uploadForm' 
           id='uploadForm' 
           action='/upload-gstorage' 
@@ -395,6 +402,10 @@
       
       <br>
       <hr width="100%" color="#D0D9EE" />
+
+      <div class="title-room">
+        <h3>房間號碼：<%-data.room%></h3>
+      </div>
 
       <div class="title-1">
         <img src="/img/ic_track.png" class="title" width="180px">
@@ -483,7 +494,7 @@
           <p>線上視訊會議 Video Call</p>
           <form onsubmit="redirect2();return false;">
             <input id="videoInput" type="text" placeholder="貼上聊天室連結" name="search" class="searchbar-2">
-            <button type="submit" class="vd-submit">送出</button>
+            <button id="vidioSubmit"type="submit" class="vd-submit">送出</button>
           </form>
         </div>
       </div>
@@ -502,9 +513,9 @@
       function closeForm() {
 
         if (document.getElementById("buttonid4").value === "") {
-          alert("please upload file!")
-          
-          return;    
+          alert("請上傳檔案！")
+           
+          document.getElementById("myModal").style.display = "none";
         }
         else {
 
@@ -621,13 +632,28 @@
     <script type='text/javascript'>
             function redirect() {
                 var input = document.getElementById('userInput').value;
-                if (input === "") {alert("please enter a string!"); return;}
+                if (input === "") {alert("請輸入房號！"); return;}
                 window.location = '/mainPage/'+input;
             }
             function redirect2() {
                 var input = document.getElementById('videoInput').value;
-                if (input === "") {alert("please enter a string!"); return;}
-                window.location = input;
+                if (input === "") {alert("請輸入連結！"); return;}
+                //window.location = input;
+                document.getElementById('videoInput').readOnly = true; 
+                //document.getElementById('videoSubmit').style.display = 'none'; 
+                // upload to cloud
+
+                var userObj = Object();
+                userObj.link = document.getElementById('videoInput').value
+                axios.post('/pushLink', JSON.stringify(userObj))
+                .then(function (response) {
+                  console.log("push link successful!");
+                })
+                .catch(function (error) {
+                  //window.location = '/Signin'
+                  console.log(error);
+                });
+                return;
             }
             </script>
 <script type="text/javascript">window.AudioContext = window.AudioContext || window.webkitAudioContext;

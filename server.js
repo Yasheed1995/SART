@@ -140,6 +140,8 @@ router.get('/mainPage/:room', (req, res) => {
               val.audio = []
           if (val.picture === undefined)
               val.picture = []
+          if (val.link === undefined)
+              val.link = ""
           d.alldata = val;
         }
         
@@ -214,11 +216,17 @@ app.post('/login', (req, res) => {
     }
   })
 })
+
+function random(seed) {
+    var x = Math.sin(seed++) * 10000;
+    return x - Math.floor(x);
+}
 function getRandomString(length) {
+  var seed = Date.now();
   var randomChars = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789';
   var result = '';
   for ( var i = 0; i < length; i++ ) {
-    result += randomChars.charAt(Math.floor(Math.random() * randomChars.length));
+    result += randomChars.charAt(Math.floor(random(seed++) * randomChars.length));
   }
   return result;
 }
@@ -293,6 +301,29 @@ app.post('/getUrl', (req, res) => {
     contentRef.set(userObj);
 })
 
+app.post('/pushLink', (req, res) => {
+    console.log(req.body)
+    var filenameObj = (JSON.parse(Object.keys(req.body)));
+    console.log(filenameObj);
+
+    var contentRef = database.ref('Room/'+RoomNum+'/link');
+    contentRef.set(filenameObj.link);
+    res.send({success: true})
+})
+
+
+app.post('/getLink', (req, res) => {
+  //console.log("/get Url return %s:" + resource_url);
+  console.log(req.body)
+  
+  var contentRef = database.ref('Room/'+RoomNum+'/link');
+  
+  contentRef.once('value').then((snapshot) => {
+    var data = snapshot.val();
+    console.log(data.link)
+    res.send({Link:data.link})
+  })
+})
 //var fireFunc = function(firebaseUrl) {
 //  return new Promise((resolve, reject) => {
 //    var ref = database.ref(firebaseUrl)
