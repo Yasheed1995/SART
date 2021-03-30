@@ -11,6 +11,7 @@ body{
 	left: 0;
 	width: 100%;
 	height: 100%;
+  overflow: scroll;
 }
 
 li {
@@ -362,7 +363,7 @@ left: 200px;
 .metronome-container .controls label span {
   background: #fff;
   color: #222;
-  padding: 8px;
+  padding: 10px;
 }
 .metronome-container .controls label span i {
   cursor: pointer;
@@ -622,12 +623,6 @@ p{
 
 body,h1 {font-family: "Raleway", sans-serif}
 body, html {height: 100%}
-.bgimg {
-	background-image: url(/img/bg_main.png);
-	min-height: 100%;
-	background-position: center;
-	background-size: cover;
-}
 .mySlides {display:none;}
 
 .image-upload>input {
@@ -761,17 +756,17 @@ border: 1px solid #d8e0f1;
 margin-right: 10px;
 display: inline-block;
 overflow: hidden;
+position: absolute;
 
 }
 
 .imgbox-big{
-width: 150px;
+width: 140px;
 height: 150px;
 /*border: 1px solid #d8e0f1;*/
 margin-right: 10px;
 display: inline-block;
 overflow: hidden;
-	
 }
 
 .imgbox-button{
@@ -788,7 +783,7 @@ left: 65px;
 
 .imgscroll{
 width: 680px;
-height: 160px;
+height: 170px;
 /*border: 1px solid #000;*/
 margin: 0 auto;
 overflow: scroll;
