@@ -98,6 +98,17 @@ router.get('/signIn', (req, res) => {
       })
 })
 
+router.get('/about', (req, res) => {
+        
+      debug('enter about!');
+    
+      res.format({
+        html: function() {
+          res.render('about')
+        }
+      })
+})
+
 var mainFunc = function(roomNUM) {
   return new Promise((resolve, reject) => {
     var ref = database.ref('Room/'+roomNUM)
