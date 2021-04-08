@@ -11,7 +11,7 @@ const fileUpload = require('express-fileupload');
 
 const app = express();
 //const app = require("https-localhost")()
-
+require('events').EventEmitter.defaultMaxListeners = 0
 const server = http.createServer(app);
 //const db = require('./modules/db');
 //const requestLogger = require('./middlewares/requestLogger');
