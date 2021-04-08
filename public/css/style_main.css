@@ -526,6 +526,14 @@ p{
 	top: 890px;
 }
 
+.video_url{
+	position: absolute;
+	top: 860px;
+	left: 700px;
+	width: 200px;
+	height: 110px
+}
+
 * {box-sizing:border-box}
 
 /* Slideshow container */

@@ -1,0 +1,65 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+	<meta charset="UTF-8">
+	<title>Document</title>
+	<link rel="stylesheet" href="style_main.css">
+	<link href="./css/all.css" rel="stylesheet">
+
+	<style type="text/css">
+
+		body{
+			background: rgb(255,239,210);
+			background: linear-gradient(180deg, rgba(255,239,210,1) 0%, rgba(179,239,248,1) 100%);
+			background-repeat:no-repeat;
+			background-size: cover;
+			background-attachment: fixed;
+		}
+
+		button{
+			background: none;
+			border: none;
+			cursor: pointer;
+		}
+
+		.guide-container{
+		  margin:0 auto;
+		  width: 800px;
+		}
+
+		.button {
+		  position: relative;
+		  background-color: #042C49;
+		  border: none;
+		  font-size: 20px;
+		  letter-spacing: 2px;
+		  color: #FFFFFF;
+		  padding: 10px;
+		  width: 110px;
+		  font-weight: bold;
+		  text-align: center;
+		  -webkit-transition-duration: 0.4s; /* Safari */
+		  transition-duration: 0.4s;
+		  overflow: hidden;
+		  cursor: pointer;
+		  margin: 20px 0 100px 330px;
+		}
+
+		.button:hover {opacity: 0.9;}
+
+		.button:active {
+		  background-color: #032843;
+/*		  box-shadow: 0 5px #666;*/
+		}
+
+	</style>
+
+</head>
+<body>
+	<div class="guide-container">
+		<button type="button" onclick="history.back()"><img src="./img/btn_back.svg" width="40px" style="margin-top: 10px;"></button>
+		<img src="./img/guide-01.png" width="800px">
+		<a href="https://docs.google.com/forms/d/e/1FAIpQLScWkYklWObS6Y9AQdQ7NtP5T5cNAqb7MZ_Nvsy_tNcHSIMYLw/viewform" target="_blank"><button class="button">前往問卷</button></a>
+	</div>
+</body>
+</html>

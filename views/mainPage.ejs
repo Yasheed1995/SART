@@ -46,7 +46,8 @@
 //          window.location = input;
 //        })
         $('#vidioSubmit').click(function() {
-          window.location = link;
+          //window.location = link;
+          window.open(link)
 
         })
       }
@@ -399,6 +400,7 @@
       <div class="navbar">
         <div class="logo"><a href='/'><img src="/img/logo.png" width="200px"></a></div>
         <a href="/about" class="about">關於</a>
+        <a href="/guide" class="about">用戶指南</a>
         <div class="title-room">
           <p>房間號碼：<%-data.room%></p>
         </div>
@@ -499,6 +501,13 @@
             <button id="vidioSubmit"type="submit" class="vd-submit">儲存</button>
           </form>
         </div>
+      </div>
+
+      <div class="video_url">
+
+        <p>視訊會議軟體開啟連結</p>&nbsp;&nbsp;
+        <a href="https://zoom.us/zh-tw/meetings.html" target="_blank"><img src="/img/zoom.png" width="80px"></a>&nbsp;&nbsp;
+        <a href="https://meet.google.com" target="_blank"><img src="/img/googlemeet.png" width="63px"></a>
       </div>
       
       
