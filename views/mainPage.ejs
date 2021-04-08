@@ -329,7 +329,7 @@
           console.log(img_ele.style.left+' - '+img_ele.style.top);
         }
       }
-      
+
       $('#uploadForm').submit(function(e) {
           e.preventDefault();
           console.log('form handler');
@@ -348,7 +348,11 @@
                 return;
               }
               closeForm();
-              //location.reload();
+              setTimeout(function() {
+                location.reload()
+              },
+              3000
+              );
             })
          return false;
       })
