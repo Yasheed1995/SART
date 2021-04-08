@@ -87,6 +87,15 @@ router.get('/room', (req, res) => {
         }
       })
 })
+router.get('/guide', (req, res) => {
+    
+      debug('enter guide!')
+      res.format({
+        html: function() {
+          res.render('guide')
+        }
+      })
+})
 
 router.get('/signIn', (req, res) => {
         
